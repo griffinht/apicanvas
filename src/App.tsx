@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import {
   ReactFlow,
   Background,
@@ -16,11 +16,33 @@ import { initialNodes, nodeTypes } from './nodes';
 import { initialEdges, edgeTypes } from './edges';
 
 export default function App() {
-  const [nodes, , onNodesChange] = useNodesState(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const onConnect: OnConnect = useCallback(
     (connection) => setEdges((edges) => addEdge(connection, edges)),
     [setEdges]
+  );
+
+  const onNodeClick = useCallback(
+    (_, node) => {
+      const newId = `dndnode_${Date.now()}`;
+      
+      setNodes((nds) => [...nds, {
+        id: newId,
+        position: {
+          x: node.position.x + 150,
+          y: node.position.y + 50,
+        },
+        data: { label: `Node ${nds.length}` }
+      }]);
+
+      setEdges((eds) => [...eds, {
+        id: `edge-${node.id}-${newId}-${Date.now()}`,
+        source: node.id,
+        target: newId,
+      }]);
+    },
+    [setNodes, setEdges]
   );
 
   return (
@@ -32,6 +54,7 @@ export default function App() {
       edgeTypes={edgeTypes}
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
+      onNodeClick={onNodeClick}
       fitView
     >
       <Background />
