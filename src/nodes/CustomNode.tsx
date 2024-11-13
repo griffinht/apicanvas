@@ -17,7 +17,7 @@ export function CustomNode({
     return !edges.some(edge => edge.source === id);
   };
 
-  const createNewConnectedNode = (sourceId: string, sourceX: number, sourceY: number) => {
+  const createNewEndpoint = (sourceId: string, sourceX: number, sourceY: number) => {
     const newNodeId = `node-${Math.random()}`;
     
     addNodes({
@@ -27,7 +27,7 @@ export function CustomNode({
         x: sourceX + 200, 
         y: sourceY
       },
-      data: { label: 'New Node' },
+      data: { label: 'New Endpoint' },
     });
 
     addEdges({
@@ -36,9 +36,25 @@ export function CustomNode({
       target: newNodeId,
     });
   };
-  
-  const handleDoubleClick = () => {
-    createNewConnectedNode(id, positionAbsoluteX, positionAbsoluteY);
+
+  const createNewMethod = (sourceId: string, sourceX: number, sourceY: number) => {
+    const newNodeId = `node-${Math.random()}`;
+    
+    addNodes({
+      id: newNodeId,
+      type: 'custom-node',
+      position: { 
+        x: sourceX + 200, 
+        y: sourceY
+      },
+      data: { label: 'New Method' },
+    });
+
+    addEdges({
+      id: `edge-${Math.random()}`,
+      source: sourceId,
+      target: newNodeId,
+    });
   };
 
   const handleRemove = () => {
@@ -56,20 +72,29 @@ export function CustomNode({
   const y = `${Math.round(positionAbsoluteY)}px`;
 
   return (
-    <div 
-      className="react-flow__node-default custom-node"
-      onDoubleClick={handleDoubleClick}
-    >
+    <div className="react-flow__node-default custom-node">
       {data.label && <div>{data.label}</div>}
-      <div>
-        {x} {y}
+      <div className="node-buttons">
+        <button 
+          onClick={() => createNewEndpoint(id, positionAbsoluteX, positionAbsoluteY)}
+          title="Add new endpoint"
+        >
+          +/
+        </button>
+        <button 
+          onClick={() => createNewMethod(id, positionAbsoluteX, positionAbsoluteY)}
+          title="Add HTTP method"
+        >
+          +M
+        </button>
+        <button 
+          onClick={handleRemove}
+          disabled={!canRemove()}
+          title="Remove node"
+        >
+          ×
+        </button>
       </div>
-      <button 
-        onClick={handleRemove}
-        disabled={!canRemove()}
-      >
-        ×
-      </button>
       <Handle type="target" position={Position.Left} />
       <Handle type="source" position={Position.Right} />
     </div>
