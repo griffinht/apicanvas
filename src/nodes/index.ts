@@ -22,5 +22,4 @@ export const initialNodes: AppNode[] = [
 
 export const nodeTypes = {
   'custom-node': CustomNode,
-  // Add any of your custom nodes here!
 } satisfies NodeTypes;

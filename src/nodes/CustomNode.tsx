@@ -1,99 +1,67 @@
 import { Handle, Position, type NodeProps, useReactFlow } from '@xyflow/react';
+import { useState, useRef, useEffect } from 'react';
+import { useNodeRemove } from '../hooks/useNodeRemove';
 
-// Update the type import and rename the type
-import { type CustomNodeData } from './types';
+const getRandomMethod = () => {
+  const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
+  return methods[Math.floor(Math.random() * methods.length)];
+};
 
-// Rename the component
+const getRandomNodeData = () => {
+  // Alternate between method and endpoint nodes
+  const isMethod = Math.random() < 0.5;
+  
+  if (isMethod) {
+    return {
+      label: getRandomMethod(),
+      type: 'method'
+    };
+  } else {
+    return {
+      label: 'new-endpoint',
+      type: 'endpoint'
+    };
+  }
+};
+
 export function CustomNode({
   id,
   positionAbsoluteX,
   positionAbsoluteY,
   data,
 }: NodeProps<CustomNodeData>) {
-  const { addNodes, addEdges, deleteElements, getEdges } = useReactFlow();
-  
-  const canRemove = () => {
-    const edges = getEdges();
-    return !edges.some(edge => edge.source === id);
-  };
+  const { addNodes, addEdges } = useReactFlow();
+  const { canRemove, handleRemove } = useNodeRemove(id);
 
-  const createNewEndpoint = (sourceId: string, sourceX: number, sourceY: number) => {
+  const createNewNode = () => {
     const newNodeId = `node-${Math.random()}`;
+    const nodeData = getRandomNodeData();
     
-    addNodes({
+    addNodes([{ 
       id: newNodeId,
       type: 'custom-node',
       position: { 
-        x: sourceX + 200, 
-        y: sourceY
+        x: positionAbsoluteX + 200, 
+        y: positionAbsoluteY
       },
-      data: { label: 'New Endpoint' },
-    });
+      data: nodeData,
+    }]);
 
-    addEdges({
+    addEdges([{ 
       id: `edge-${Math.random()}`,
-      source: sourceId,
+      source: id,
       target: newNodeId,
-    });
+    }]);
   };
-
-  const createNewMethod = (sourceId: string, sourceX: number, sourceY: number) => {
-    const newNodeId = `node-${Math.random()}`;
-    
-    addNodes({
-      id: newNodeId,
-      type: 'custom-node',
-      position: { 
-        x: sourceX + 200, 
-        y: sourceY
-      },
-      data: { label: 'New Method' },
-    });
-
-    addEdges({
-      id: `edge-${Math.random()}`,
-      source: sourceId,
-      target: newNodeId,
-    });
-  };
-
-  const handleRemove = () => {
-    if (!canRemove()) {
-      alert('Please remove child nodes first');
-      return;
-    }
-    deleteElements({
-      nodes: [{ id }],
-      edges: [],
-    });
-  };
-
-  const x = `${Math.round(positionAbsoluteX)}px`;
-  const y = `${Math.round(positionAbsoluteY)}px`;
 
   return (
     <div className="react-flow__node-default custom-node">
-      {data.label && <div>{data.label}</div>}
+      <div>{data.label}</div>
       <div className="node-buttons">
-        <button 
-          onClick={() => createNewEndpoint(id, positionAbsoluteX, positionAbsoluteY)}
-          title="Add new endpoint"
-        >
-          +/
-        </button>
-        <button 
-          onClick={() => createNewMethod(id, positionAbsoluteX, positionAbsoluteY)}
-          title="Add HTTP method"
-        >
-          +M
-        </button>
-        <button 
-          onClick={handleRemove}
-          disabled={!canRemove()}
-          title="Remove node"
-        >
-          ×
-        </button>
+        {data.type !== 'method' && (
+          <button onClick={createNewNode} title="Add new node">+</button>
+        )}
+        <button onClick={handleRemove} disabled={!canRemove()} title="Remove node">×</button>
       </div>
       <Handle type="target" position={Position.Left} />
       <Handle type="source" position={Position.Right} />
