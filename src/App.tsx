@@ -29,9 +29,10 @@ export default function App() {
       
       setNodes((nds) => [...nds, {
         id: newId,
+        type: 'custom-node',
         position: {
-          x: node.position.x + 150,
-          y: node.position.y + 50,
+          x: node.position.x + 250,
+          y: node.position.y,
         },
         data: { label: `Node ${nds.length}` }
       }]);
