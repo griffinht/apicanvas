@@ -10,8 +10,13 @@ export function CustomNode({
   positionAbsoluteY,
   data,
 }: NodeProps<CustomNodeData>) {
-  const { addNodes, addEdges, deleteElements } = useReactFlow();
+  const { addNodes, addEdges, deleteElements, getEdges } = useReactFlow();
   
+  const canRemove = () => {
+    const edges = getEdges();
+    return !edges.some(edge => edge.source === id);
+  };
+
   const createNewConnectedNode = (sourceId: string, sourceX: number, sourceY: number) => {
     const newNodeId = `node-${Math.random()}`;
     
@@ -37,6 +42,10 @@ export function CustomNode({
   };
 
   const handleRemove = () => {
+    if (!canRemove()) {
+      alert('Please remove child nodes first');
+      return;
+    }
     deleteElements({
       nodes: [{ id }],
       edges: [],
@@ -57,7 +66,7 @@ export function CustomNode({
       </div>
       <button 
         onClick={handleRemove}
-        className="remove-button"
+        disabled={!canRemove()}
       >
         ×
       </button>
