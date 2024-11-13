@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 import {
   ReactFlow,
   Background,
@@ -12,7 +12,7 @@ import {
 
 import '@xyflow/react/dist/style.css';
 
-import { initialNodes, nodeTypes } from './nodes';
+import { initialNodes, nodeTypes } from './nodes/index';
 import { initialEdges, edgeTypes } from './edges';
 
 export default function App() {
@@ -22,30 +22,7 @@ export default function App() {
     (connection) => setEdges((edges) => addEdge(connection, edges)),
     [setEdges]
   );
-
-  const onNodeClick = useCallback(
-    (_, node) => {
-      const newId = `dndnode_${Date.now()}`;
-      
-      setNodes((nds) => [...nds, {
-        id: newId,
-        type: 'custom-node',
-        position: {
-          x: node.position.x + 250,
-          y: node.position.y,
-        },
-        data: { label: `Node ${nds.length}` }
-      }]);
-
-      setEdges((eds) => [...eds, {
-        id: `edge-${node.id}-${newId}-${Date.now()}`,
-        source: node.id,
-        target: newId,
-      }]);
-    },
-    [setNodes, setEdges]
-  );
-
+//https://reactflow.dev/learn/concepts/the-viewport
   return (
     <ReactFlow
       nodes={nodes}
@@ -55,7 +32,8 @@ export default function App() {
       edgeTypes={edgeTypes}
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
-      onNodeClick={onNodeClick}
+      //selectionOnDrag={false}
+      //panOnDrag={true}
       fitView
     >
       <Background />
