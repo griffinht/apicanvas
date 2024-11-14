@@ -37,8 +37,8 @@ export function CustomNode({
   const { canRemove, handleRemove } = useNodeRemove(id);
   const [isEditing, setIsEditing] = useState(false);
   const [labelText, setLabelText] = useState(data.data.label);
-  const [minimized, setMinimized] = useState(data.data.minimized);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [minimized, setMinimized] = useState(data.data.minimized);
 
   // Add handler for saving the label
   const handleLabelSave = () => {
@@ -53,11 +53,55 @@ export function CustomNode({
     }
   };
 
-  const handleMinimize = () => {
-    data.data.minimized = !minimized;
-    setMinimized(!minimized);
-  };
+  useEffect(() => {
+    console.log('i was minimized', minimized, data.data.label);
+  }, [minimized]);
 
+  const handleMinimize = () => {
+    const newMinimized = !minimized;
+    data.data.minimized = newMinimized;
+    setMinimized(newMinimized);
+
+    // Get all edges where this node is the source
+    const edges = getEdges().filter(edge => edge.source === id);
+    
+    // Get all direct child nodes
+    const childNodeIds = edges.map(edge => edge.target);
+    // Recursively get all child nodes
+    const getAllChildNodes = (nodeId: string): string[] => {
+      const directChildren = getEdges()
+        .filter(edge => edge.source === nodeId)
+        .map(edge => edge.target);
+      
+      return [
+        ...directChildren,
+        ...directChildren.flatMap(childId => getAllChildNodes(childId))
+      ];
+    };
+
+    // Get all descendant nodes
+    const allChildNodeIds = getAllChildNodes(id);
+
+    
+    // Update all nodes, setting minimized state for children
+    setNodes(nodes => 
+      nodes.map(node => {
+        if (childNodeIds.includes(node.id)) {
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              data: {
+                ...node.data,
+                minimized: newMinimized
+              }
+            }
+          };
+        }
+        return node;
+      })
+    );
+  };
 
   // Focus input when editing starts
   useEffect(() => {
@@ -71,8 +115,8 @@ export function CustomNode({
   }, [labelText]);
 
   useEffect(() => {
-    console.log('i was minimized', minimized);
-  }, [minimized]);
+    console.log('i was minimized', data.data.minimized);
+  }, [data.data.minimized]);
 
   const createNewNode = () => {
     const newNodeId = `node-${Math.random()}`;
