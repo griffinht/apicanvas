@@ -1,6 +1,8 @@
 import { useCallback, useState } from 'react';
 import {
   ReactFlow,
+  Panel,
+  ReactFlowProvider,
   Background,
   Controls,
   MiniMap,
@@ -8,83 +10,77 @@ import {
   useNodesState,
   useEdgesState,
   type OnConnect,
+  useReactFlow,
+  ReactFlowInstance,
 } from '@xyflow/react';
 
 import '@xyflow/react/dist/style.css';
 
 import { initialNodes, nodeTypes } from './nodes/index';
 import { initialEdges, edgeTypes } from './edges';
-import { loadOpenApiSpec } from './utils/openApiLoader';
-import type { OpenApiSpec } from './types/openapi';
 
-export default function App() {
-  const [openApiSpec, setOpenApiSpec] = useState<OpenApiSpec>({
-    openapi: "3.0.0",
-    info: {
-      title: "My New API",
-      version: "1.0.0"
-    },
-    rootPath: {
-      path: '/',
-      methods: ['get'],
-      paths: [
-        {
-          path: '/users',
-          methods: ['get', 'post'],
-          paths: [],
-          minimized: false
-        }
-      ],
-      minimized: false
-    }
-  });
-  
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes(openApiSpec.rootPath));
+const SaveRestore = () => {
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  
-  const saveSpec = useCallback(() => {
-    console.log('Current OpenAPI Spec:', JSON.stringify(openApiSpec, null, 2));
-    alert('OpenAPI spec printed to console');
-  }, [openApiSpec]);
-
-  const loadSpec = useCallback(async () => {
-    try {
-      const transformedSpec = await loadOpenApiSpec('/openapi.json');
-      setOpenApiSpec(transformedSpec);
-      console.log('Loaded OpenAPI Spec:', transformedSpec);
-    } catch (error) {
-      console.error('Error loading OpenAPI spec:', error);
-    }
-  }, []);
-
+  const [rfInstance, setRfInstance] = useState(null);
+  const { setViewport } = useReactFlow();
+ 
   const onConnect: OnConnect = useCallback(
     (connection) => setEdges((edges) => addEdge(connection, edges)),
     [setEdges]
   );
+  const onSave = useCallback(() => {
+    if (rfInstance) {
+      const flow = rfInstance.toObject();
+      console.log('flow', flow);
+    } else {
+      console.error('rfInstance is null');
+    }
+  }, [rfInstance]);
+ 
+  const onLoad = useCallback(() => {
+    const restoreFlow = async () => {
+      const flow = JSON.parse('');
+ 
+      if (flow) {
+        const { x = 0, y = 0, zoom = 1 } = flow.viewport;
+        setNodes(flow.nodes || []);
+        setEdges(flow.edges || []);
+        setViewport({ x, y, zoom });
+      }
+    };
+ 
+    restoreFlow();
+  }, [setNodes, setViewport]);
 
   return (
-    <div style={{ width: '100vw', height: '100vh' }}>
-      <div style={{ position: 'absolute', right: '10px', top: '10px', zIndex: 4 }}>
-        <span style={{ marginRight: '16px', color: '#666' }}>
-          {openApiSpec.info.title} v{openApiSpec.info.version}
-        </span>
-        <button onClick={saveSpec}>Save Spec</button>
-        <button onClick={loadSpec} style={{ marginLeft: '8px' }}>Load Spec</button>
-      </div>
-      <ReactFlow
-        nodes={nodes}
-        nodeTypes={nodeTypes}
-        onNodesChange={onNodesChange}
-        edges={edges}
-        edgeTypes={edgeTypes}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        fitView
-      >
-        <Background />
-        <MiniMap />
-        <Controls />
-      </ReactFlow>
-    </div>
+    <ReactFlow
+      nodes={nodes}
+      nodeTypes={nodeTypes}
+      onNodesChange={onNodesChange}
+      edges={edges}
+      edgeTypes={edgeTypes}
+      onEdgesChange={onEdgesChange}
+      onConnect={onConnect}
+      // @ts-ignore
+      onInit={setRfInstance}
+      fitView
+    >
+      <Panel position="top-right">
+        <button onClick={onSave}>save</button>
+        <button onClick={onLoad}>load</button>
+      </Panel>
+      <Background />
+      <MiniMap />
+      <Controls />
+    </ReactFlow>
+  );
+};
+
+export default function App() {
+  return (
+    <ReactFlowProvider>
+      <SaveRestore />
+    </ReactFlowProvider>
   );
 }

@@ -1,7 +1,6 @@
 import { Handle, Position, type NodeProps, useReactFlow } from '@xyflow/react';
 import { useState, useRef, useEffect } from 'react';
 import { useNodeRemove } from '../hooks/useNodeRemove';
-import { PathItem, createRandomPathItem } from '../types/openapi';
 import { PathNodeData } from './types';
 
 export function PathNode({
@@ -46,7 +45,6 @@ export function PathNode({
 
   const createNewNode = () => {
     const newNodeId = `node-${Math.random()}`;
-    const nodeData = createRandomPathItem();
     
     addNodes([{ 
       id: newNodeId,
@@ -55,7 +53,7 @@ export function PathNode({
         x: positionAbsoluteX + 200, 
         y: positionAbsoluteY
       },
-      data: nodeData,
+      data: { path: 'hi' },
     }]);
 
     addEdges([{ 
