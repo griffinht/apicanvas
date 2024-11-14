@@ -6,6 +6,7 @@
   },
   "paths": {
     "/users": {
+      "description": "Operations related to users",
       "get": {
         "summary": "Get all users",
         "responses": {

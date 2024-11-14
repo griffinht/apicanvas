@@ -1,31 +1,51 @@
-import { Handle, Position, type NodeProps, useReactFlow } from '@xyflow/react';
+import { Handle, Position, type NodeProps, useReactFlow, Edge } from '@xyflow/react';
 import { useState, useRef, useEffect } from 'react';
 import { useNodeRemove } from '../hooks/useNodeRemove';
-import { CustomNodeData, NodeData } from './types';
+import { CustomNodeData, OpenAPINode } from './types';
 
-const getRandomMethod = () => {
-  const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
-  return methods[Math.floor(Math.random() * methods.length)];
-};
+const getOpenAPINodes = (getEdges: () => Edge[], id: string): any => {
+    const edges = getEdges().filter(edge => edge.source === id);
+    
+    console.log(edges);
+    // Get all direct child nodes
+    const childNodeIds = edges.map(edge => edge.target);
+    // dont forget the delete elements??
+}
 
-const getRandomNodeData = (): NodeData => {
-  // Alternate between method and endpoint nodes
-  const isMethod = Math.random() < 0.5;
-  
-  if (isMethod) {
-    return {
-      label: getRandomMethod(),
-      type: 'method',
-      minimized: false
-    };
-  } else {
-    return {
-      label: 'new-endpoint', 
-      type: 'endpoint',
-      minimized: false
-    };
-  }
-};
+const maximizeNode = (id: string) => {
+    // todo
+
+    // input all child openapi nodes
+    // output all CustomNode - ALL - recursive!
+    // remove all children, since they are all real nodes now
+
+    // separate adding the nodes from making the nodes to add
+
+    /*
+    https://reactflow.dev/examples/nodes/add-node-on-edge-drop
+    dynamic edge add? no need to add edges, just add nodes
+    */
+
+    // make a ton of new nodes
+    //node.data.children = [];
+    //addNodes
+    //addEdges
+}
+const minimizeNode = (id: string) => {
+    // todo
+
+    // input all direct children
+    // output openapi node for each child, as well as delete the old child
+    // note that each openapi node recursively contains all children
+
+    // separate getting the data from deleting the children
+
+
+    //node.data.children = getOpenAPINodes(getEdges, id);
+    // just pass in the parent node, all the children will be included
+    //deleteElements https://reactflow.dev/api-reference/types/delete-elements
+}
+
 
 export function CustomNode({
   id,
@@ -36,13 +56,13 @@ export function CustomNode({
   const { addNodes, addEdges, getNodes, getEdges, deleteElements, setNodes, setEdges } = useReactFlow();
   const { canRemove, handleRemove } = useNodeRemove(id);
   const [isEditing, setIsEditing] = useState(false);
-  const [labelText, setLabelText] = useState(data.data.label);
+  const [labelText, setLabelText] = useState(false);//data.data.label);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [minimized, setMinimized] = useState(data.data.minimized);
+  const [minimized, setMinimized] = useState(false);//data.data.minimized);
 
   // Add handler for saving the label
   const handleLabelSave = () => {
-    data.data.label = labelText;
+    //data.data.label = labelText;
     setIsEditing(false);
   };
 
@@ -59,48 +79,10 @@ export function CustomNode({
 
   const handleMinimize = () => {
     const newMinimized = !minimized;
-    data.data.minimized = newMinimized;
+    //data.data.minimized = newMinimized;
     setMinimized(newMinimized);
 
-    // Get all edges where this node is the source
-    const edges = getEdges().filter(edge => edge.source === id);
-    
-    // Get all direct child nodes
-    const childNodeIds = edges.map(edge => edge.target);
-    // Recursively get all child nodes
-    const getAllChildNodes = (nodeId: string): string[] => {
-      const directChildren = getEdges()
-        .filter(edge => edge.source === nodeId)
-        .map(edge => edge.target);
-      
-      return [
-        ...directChildren,
-        ...directChildren.flatMap(childId => getAllChildNodes(childId))
-      ];
-    };
-
-    // Get all descendant nodes
-    const allChildNodeIds = getAllChildNodes(id);
-
-    
-    // Update all nodes, setting minimized state for children
-    setNodes(nodes => 
-      nodes.map(node => {
-        if (childNodeIds.includes(node.id)) {
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              data: {
-                ...node.data,
-                minimized: newMinimized
-              }
-            }
-          };
-        }
-        return node;
-      })
-    );
+    getOpenAPINode(getEdges, id);
   };
 
   // Focus input when editing starts
