@@ -35,33 +35,39 @@ export function CustomNode({
   const { canRemove, handleRemove } = useNodeRemove(id);
   const [isMinimized, setIsMinimized] = useState(false);
 
-  const removeChildNodes = () => {
-    const edges = getEdges();
-    const descendantIds = new Set<string>();
-    
-    const queue = [id];
-    while (queue.length > 0) {
-      const currentId = queue.shift()!;
-      edges.forEach(edge => {
-        if (edge.source === currentId) {
-          descendantIds.add(edge.target);
-          queue.push(edge.target);
-        }
-      });
-    }
-
-    deleteElements({
-      nodes: Array.from(descendantIds).map(nodeId => ({ id: nodeId })),
-      edges: edges.filter(edge => 
-        descendantIds.has(edge.source) || descendantIds.has(edge.target)
-      ),
-    });
-  };
-
   const handleMinimizeToggle = () => {
+    const nodes = getNodes();
+    const edges = getEdges();
+    
+    // Find all descendant nodes recursively
+    const findDescendants = (nodeId: string): string[] => {
+      const childEdges = edges.filter(edge => edge.source === nodeId);
+      const childNodes = childEdges.map(edge => edge.target);
+      const descendants = [...childNodes];
+      
+      childNodes.forEach(childId => {
+        descendants.push(...findDescendants(childId));
+      });
+      
+      return descendants;
+    };
+
+    const descendants = findDescendants(id);
+    
     if (!isMinimized) {
-      removeChildNodes();
+      // Hide all descendant nodes
+      setNodes(nodes.map(node => ({
+        ...node,
+        hidden: descendants.includes(node.id) ? true : node.hidden
+      })));
+    } else {
+      // Show all descendant nodes
+      setNodes(nodes.map(node => ({
+        ...node,
+        hidden: descendants.includes(node.id) ? false : node.hidden
+      })));
     }
+    
     setIsMinimized(!isMinimized);
   };
 
