@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   ReactFlow,
   Background,
@@ -14,25 +14,33 @@ import '@xyflow/react/dist/style.css';
 
 import { initialNodes, nodeTypes } from './nodes/index';
 import { initialEdges, edgeTypes } from './edges';
-
-// Example OpenAPI specification structure
-const defaultOpenApiSpec = {
-  openapi: "3.0.0",
-  info: {
-    title: "My New API",
-    version: "1.0.0"
-  },
-  paths: {},
-  components: {
-    schemas: {}
-  }
-};
+import { loadOpenApiSpec } from './utils/openApiLoader';
+import type { OpenApiSpec } from './types/openapi';
 
 export default function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   
-  const [openApiSpec, setOpenApiSpec] = useState(defaultOpenApiSpec);
+  const [openApiSpec, setOpenApiSpec] = useState<OpenApiSpec>({
+    openapi: "3.0.0",
+    info: {
+      title: "My New API",
+      version: "1.0.0"
+    },
+    rootPath: {
+      path: '/',
+      methods: ['get'],
+      paths: [
+        {
+          path: '/users',
+          methods: ['get', 'post'],
+          paths: [],
+          minimized: false
+        }
+      ],
+      minimized: false
+    }
+  });
 
   const saveSpec = useCallback(() => {
     console.log('Current OpenAPI Spec:', JSON.stringify(openApiSpec, null, 2));
@@ -41,10 +49,9 @@ export default function App() {
 
   const loadSpec = useCallback(async () => {
     try {
-      const response = await fetch('/openapi.json');
-      const data = await response.json();
-      setOpenApiSpec(data);
-      console.log('Loaded OpenAPI Spec:', data);
+      const transformedSpec = await loadOpenApiSpec('/openapi.json');
+      setOpenApiSpec(transformedSpec);
+      console.log('Loaded OpenAPI Spec:', transformedSpec);
     } catch (error) {
       console.error('Error loading OpenAPI spec:', error);
     }
