@@ -14,4 +14,18 @@ export interface OpenApiSpec {
     version: string;
   };
   rootPath: PathItem;
-} 
+}
+
+export const getRandomMethod = (): HttpMethod => {
+  const methods: HttpMethod[] = ['get', 'post', 'put', 'delete', 'patch'];
+  return methods[Math.floor(Math.random() * methods.length)];
+};
+
+export const createRandomPathItem = (): PathItem => {
+  return {
+    path: 'new-path',
+    methods: [getRandomMethod()],
+    paths: [],
+    minimized: false
+  };
+}; 

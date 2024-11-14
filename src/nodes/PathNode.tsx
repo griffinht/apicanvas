@@ -1,36 +1,15 @@
 import { Handle, Position, type NodeProps, useReactFlow } from '@xyflow/react';
 import { useState, useRef, useEffect } from 'react';
 import { useNodeRemove } from '../hooks/useNodeRemove';
-import { CustomNodeData } from './types';
-
-const getRandomMethod = () => {
-  const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
-  return methods[Math.floor(Math.random() * methods.length)];
-};
-
-const getRandomNodeData = () => {
-  // Alternate between method and endpoint nodes
-  const isMethod = Math.random() < 0.5;
-  
-  if (isMethod) {
-    return {
-      label: getRandomMethod(),
-      type: 'method'
-    };
-  } else {
-    return {
-      label: 'new-endpoint',
-      type: 'endpoint'
-    };
-  }
-};
+import { PathItem, createRandomPathItem } from '../types/openapi';
+import { PathNodeData } from './types';
 
 export function PathNode({
   id,
   positionAbsoluteX,
   positionAbsoluteY,
   data,
-}: NodeProps<CustomNodeData>) {
+}: NodeProps<PathNodeData>) {
   const { addNodes, addEdges, getNodes, getEdges, deleteElements, setNodes, setEdges } = useReactFlow();
   const { canRemove, handleRemove } = useNodeRemove(id);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -67,7 +46,7 @@ export function PathNode({
 
   const createNewNode = () => {
     const newNodeId = `node-${Math.random()}`;
-    const nodeData = getRandomNodeData();
+    const nodeData = createRandomPathItem();
     
     addNodes([{ 
       id: newNodeId,
@@ -89,7 +68,7 @@ export function PathNode({
   return (
     <div className={`react-flow__node-default path-node ${isMinimized ? 'minimized' : ''}`}>
       <div className="node-header">
-        <div>{data.label}</div>
+        <div>{data.path}</div>
         <div className="node-buttons">
           <button onClick={handleMinimizeToggle} title={isMinimized ? "Maximize" : "Minimize"}>
             {isMinimized ? '□' : '−'}
