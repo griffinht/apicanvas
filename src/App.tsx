@@ -11,7 +11,6 @@ import {
   useEdgesState,
   type OnConnect,
   useReactFlow,
-  ReactFlowInstance,
 } from '@xyflow/react';
 
 import '@xyflow/react/dist/style.css';
