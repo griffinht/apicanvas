@@ -1,6 +1,7 @@
 import { Handle, Position, type NodeProps, useReactFlow } from '@xyflow/react';
 import { useState, useRef, useEffect } from 'react';
 import { useNodeRemove } from '../hooks/useNodeRemove';
+import { CustomNodeData } from './types';
 
 const getRandomMethod = () => {
   const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
@@ -93,7 +94,7 @@ export function CustomNode({
           <button onClick={handleMinimizeToggle} title={isMinimized ? "Maximize" : "Minimize"}>
             {isMinimized ? '□' : '−'}
           </button>
-          {data.type !== 'method' && !isMinimized && (
+          {!isMinimized && (
             <button onClick={createNewNode} title="Add new node">+</button>
           )}
           <button onClick={handleRemove} disabled={!canRemove()} title="Remove node">×</button>
