@@ -1,26 +1,28 @@
 import { Handle, Position, type NodeProps, useReactFlow } from '@xyflow/react';
 import { useState, useRef, useEffect } from 'react';
 import { useNodeRemove } from '../hooks/useNodeRemove';
-import { CustomNodeData } from './types';
+import { CustomNodeData, NodeData } from './types';
 
 const getRandomMethod = () => {
   const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
   return methods[Math.floor(Math.random() * methods.length)];
 };
 
-const getRandomNodeData = () => {
+const getRandomNodeData = (): NodeData => {
   // Alternate between method and endpoint nodes
   const isMethod = Math.random() < 0.5;
   
   if (isMethod) {
     return {
       label: getRandomMethod(),
-      type: 'method'
+      type: 'method',
+      minimized: false
     };
   } else {
     return {
-      label: 'new-endpoint',
-      type: 'endpoint'
+      label: 'new-endpoint', 
+      type: 'endpoint',
+      minimized: false
     };
   }
 };
@@ -33,47 +35,47 @@ export function CustomNode({
 }: NodeProps<CustomNodeData>) {
   const { addNodes, addEdges, getNodes, getEdges, deleteElements, setNodes, setEdges } = useReactFlow();
   const { canRemove, handleRemove } = useNodeRemove(id);
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [labelText, setLabelText] = useState(data.data.label);
+  const [minimized, setMinimized] = useState(data.data.minimized);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleMinimizeToggle = () => {
-    const nodes = getNodes();
-    const edges = getEdges();
-    
-    // Find all descendant nodes recursively
-    const findDescendants = (nodeId: string): string[] => {
-      const childEdges = edges.filter(edge => edge.source === nodeId);
-      const childNodes = childEdges.map(edge => edge.target);
-      const descendants = [...childNodes];
-      
-      childNodes.forEach(childId => {
-        descendants.push(...findDescendants(childId));
-      });
-      
-      return descendants;
-    };
-
-    const descendants = findDescendants(id);
-    
-    if (!isMinimized) {
-      // Hide all descendant nodes
-      setNodes(nodes.map(node => ({
-        ...node,
-        hidden: descendants.includes(node.id) ? true : node.hidden
-      })));
-    } else {
-      // Show all descendant nodes
-      setNodes(nodes.map(node => ({
-        ...node,
-        hidden: descendants.includes(node.id) ? false : node.hidden
-      })));
-    }
-    
-    setIsMinimized(!isMinimized);
+  // Add handler for saving the label
+  const handleLabelSave = () => {
+    data.data.label = labelText;
+    setIsEditing(false);
   };
+
+  // Handle enter key press
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleLabelSave();
+    }
+  };
+
+  const handleMinimize = () => {
+    data.data.minimized = !minimized;
+    setMinimized(!minimized);
+  };
+
+
+  // Focus input when editing starts
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isEditing]);
+
+  useEffect(() => {
+    console.log('labelText', labelText);
+  }, [labelText]);
+
+  useEffect(() => {
+    console.log('i was minimized', minimized);
+  }, [minimized]);
 
   const createNewNode = () => {
     const newNodeId = `node-${Math.random()}`;
-    const nodeData = getRandomNodeData();
     
     addNodes([{ 
       id: newNodeId,
@@ -82,7 +84,9 @@ export function CustomNode({
         x: positionAbsoluteX + 200, 
         y: positionAbsoluteY
       },
-      data: nodeData,
+      data: {
+        data: getRandomNodeData()
+      }
     }]);
 
     addEdges([{ 
@@ -93,16 +97,27 @@ export function CustomNode({
   };
 
   return (
-    <div className={`react-flow__node-default custom-node ${isMinimized ? 'minimized' : ''}`}>
+    <div className={`react-flow__node-default custom-node`}>
       <div className="node-header">
-        <div>{data.label}</div>
+        {isEditing && data.data.type === 'endpoint' ? (
+          <input
+            ref={inputRef}
+            value={labelText}
+            onChange={(e) => setLabelText(e.target.value)}
+            onBlur={handleLabelSave}
+            onKeyPress={handleKeyPress}
+            className="node-input"
+          />
+        ) : (
+          <div onDoubleClick={() => data.data.type === 'endpoint' && setIsEditing(true)}>
+            {data.data.label}
+          </div>
+        )}
         <div className="node-buttons">
-          <button onClick={handleMinimizeToggle} title={isMinimized ? "Maximize" : "Minimize"}>
-            {isMinimized ? '□' : '−'}
+          <button onClick={handleMinimize} title={minimized ? "Maximize" : "Minimize"}>
+            {minimized ? '□' : '−'}
           </button>
-          {!isMinimized && (
-            <button onClick={createNewNode} title="Add new node">+</button>
-          )}
+          <button onClick={createNewNode} title="Add new node">+</button>
           <button onClick={handleRemove} disabled={!canRemove()} title="Remove node">×</button>
         </div>
       </div>

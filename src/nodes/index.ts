@@ -9,7 +9,13 @@ export const initialNodes: AppNode[] = [
     id: 'b',
     type: 'custom-node',
     position: { x: -100, y: 100 },
-    data: { label: '/sdasd' },
+    data: {
+      data: {
+        label: '/sdasd',
+        type: 'endpoint',
+        minimized: false
+      }
+    }
   },
   { id: 'c', position: { x: 100, y: 100 }, data: { label: 'your ideas' } },
   {
