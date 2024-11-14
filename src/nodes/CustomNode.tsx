@@ -27,12 +27,22 @@ const maximizeNode = (id: string) => {
     */
 
     // make a ton of new nodes
+    // or just one low key
     //node.data.children = [];
     //addNodes
     //addEdges
 }
 const minimizeNode = (id: string) => {
     // todo
+
+    // input a CustomNode
+    // output OpenAPINode -> children(minimzeNode(childNode))
+
+    // API FIRST API FIRST OPTIMIZE LATER API FIRST PRIORITIZE API OVER CORRECTNESS
+    // confusing because how to getChildren - but hey man just edges.filter(isChildEdge).map(getNode(id)) lol
+    // oh no its not efficent
+    // OPTIMIZE LATER ONCE THE API WORKS
+    // thats why mocking is so important
 
     // input all direct children
     // output openapi node for each child, as well as delete the old child
@@ -44,8 +54,10 @@ const minimizeNode = (id: string) => {
     //node.data.children = getOpenAPINodes(getEdges, id);
     // just pass in the parent node, all the children will be included
     //deleteElements https://reactflow.dev/api-reference/types/delete-elements
+    // also contrll backspace delete node!
 }
 
+// THEN GET HIEARCHY DONE
 
 export function CustomNode({
   id,
