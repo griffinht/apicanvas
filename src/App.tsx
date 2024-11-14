@@ -18,9 +18,6 @@ import { loadOpenApiSpec } from './utils/openApiLoader';
 import type { OpenApiSpec } from './types/openapi';
 
 export default function App() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  
   const [openApiSpec, setOpenApiSpec] = useState<OpenApiSpec>({
     openapi: "3.0.0",
     info: {
@@ -41,7 +38,10 @@ export default function App() {
       minimized: false
     }
   });
-
+  
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes(openApiSpec.rootPath));
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  
   const saveSpec = useCallback(() => {
     console.log('Current OpenAPI Spec:', JSON.stringify(openApiSpec, null, 2));
     alert('OpenAPI spec printed to console');
