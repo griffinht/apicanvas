@@ -4,30 +4,53 @@ import {
   Controls,
   MiniMap,
   Panel,
+  ReactFlow,
+  useNodesState,
+  useEdgesState,
+  useReactFlow,
+  addEdge,
+  OnConnect,
 } from '@xyflow/react';
 
 import '@xyflow/react/dist/style.css';
 
-import SaveRestore from './saverestore/SaveRestore';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { LoadApiDialog} from './saverestore/LoadApiDialog';
 import { showApiDialogSave as downloadApi } from './saverestore/SaveApiDialog';
 import { showApiPreviewDialog } from './saverestore/PreviewDialog';
-import { OpenAPISpec } from './OpenAPISpec';
+import { initialNodes, nodeTypes } from './nodes';
+import { edgeTypes, initialEdges } from './edges';
 
 export default function App() {
   const [title, setTitle] = useState('My New API');
   const [version, setVersion] = useState('0.0.1');
-  const [paths, setPaths] = useState({});
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [rfInstance, setRfInstance] = useState(null);
+
+  const getPaths = () => {
+    console.log(rfInstance.toObject());
+    // nodes and edges
+    return {};
+  };
+
+  const setPaths = (paths: any) => {
+    console.log(paths);
+  };
+
+  const onConnect: OnConnect = useCallback(
+    (connection) => setEdges((edges) => addEdge(connection, edges)),
+    [setEdges]
+  );
 
   const getApi = () => {
     return {
       openapi: "3.0.0",
       info: { title, version },
-      paths
+      paths: getPaths()
     };
   };
-  // Simple safety wrapper
+
   const setApi = (newApi: any) => {
     setTitle(newApi.info.title);
     setVersion(newApi.info.version);
@@ -51,7 +74,18 @@ export default function App() {
           style={{ fontSize: 'inherit', width: '60px' }}
         />
       </div>
-      <SaveRestore>
+      <ReactFlow
+        nodes={nodes}
+        nodeTypes={nodeTypes}
+        onNodesChange={onNodesChange}
+        edges={edges}
+        edgeTypes={edgeTypes}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        //@ts-ignore
+        onInit={setRfInstance}
+        fitView
+      >
         <Background />
         <MiniMap />
         <Controls />
@@ -60,7 +94,7 @@ export default function App() {
           <button onClick={() => downloadApi(getApi())}>save</button>
           <button onClick={() => showApiPreviewDialog(getApi())}>preview</button>
         </Panel>
-      </SaveRestore>
+      </ReactFlow>
     </ReactFlowProvider>
   );
 }
