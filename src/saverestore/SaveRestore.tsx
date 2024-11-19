@@ -8,9 +8,8 @@ import { useNodesState, useEdgesState, useReactFlow, useNodes, useEdges, addEdge
 import { initialNodes, nodeTypes } from '../nodes';
 import { useState } from 'react';
 import { edgeTypes, initialEdges } from '../edges';
-import { OpenAPISpec } from '../OpenAPISpec';
 
-const SaveRestore = ({ children, api, setApi }: { children: React.ReactNode, api: OpenAPISpec, setApi: (api: OpenAPISpec) => void }) => {
+const SaveRestore = ({ children }: { children: React.ReactNode }) => {
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
     const [rfInstance, setRfInstance] = useState(null);
@@ -22,8 +21,8 @@ const SaveRestore = ({ children, api, setApi }: { children: React.ReactNode, api
     );
     const onSave = useCallback(() => {
         if (rfInstance) {
-            //const flow = rfInstance.toObject();
-            showApiDialog(api);
+            const flow = rfInstance;
+            console.log(flow);
         } else {
             console.error('rfInstance is null');
         }
