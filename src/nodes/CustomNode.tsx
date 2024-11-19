@@ -57,7 +57,91 @@ const minimizeNode = (id: string) => {
     // also contrll backspace delete node!
 }
 
+// Generate a bunch of OpenAPINodes with nested stuff explicitly
 // THEN GET HIEARCHY DONE
+
+
+// rootNode: OpenAPINode
+// expanded: retract, add, delete, children (each former OpenAPINode child)
+// retracted: nothing lol except for the expand button and OpenAPINode in the data
+//
+//
+//
+//
+//TODO TODO TODO START WITH THESE VERY SIMPLE FLOWS
+//
+//
+//
+//
+//
+//
+//
+
+// API FIRST
+// write ur damn data
+// then mold the app to fit
+// MOCK FIRST
+// spec2node(spec.yaml) -> rootNode
+// node2spec(rootNode) -> spec.yaml
+// addNode(node) -> adds to react flow
+// -> expand
+// minimizeNode() -> removes children? from react flow
+// ????
+// but hey,, WHO CARES
+// just get add working - you know its gonna be that retract/expand thing anyways
+// so 
+// 1. start with the spec2node stuff
+// 2. then addNode(node)
+// ? then node2spec
+// 3. then expand button
+// then add/edit
+// ? then node2spec
+// then retract button
+// ? then node2spec
+
+// FLEXIBILITY
+// ALSO shouldn't I be able to start with schema and make the endpoints for it? potentially a reverse api???
+// FLEXIBILITY
+
+const openAPINodes: OpenAPINode[] = [
+  {
+    node: {
+      path: '/users',
+      description: 'Operations related to users'
+    },
+    children: [
+      {
+        node: {
+          method: 'GET',
+          summary: 'Get all users'
+        },
+        children: []
+      },
+      {
+        node: {
+          method: 'POST',
+          summary: 'Create a new user'
+        },
+        children: []
+      }
+    ]
+  },
+  {
+    node: {
+      path: '/users/{userId}',
+      description: 'Operations related to a specific user'
+    },
+    children: [
+      {
+        node: {
+          method: 'GET',
+          summary: 'Get user by ID'
+        },
+        children: []
+      }
+    ]
+  }
+];
 
 export function CustomNode({
   id,
@@ -66,98 +150,11 @@ export function CustomNode({
   data,
 }: NodeProps<CustomNodeData>) {
   const { addNodes, addEdges, getNodes, getEdges, deleteElements, setNodes, setEdges } = useReactFlow();
-  const { canRemove, handleRemove } = useNodeRemove(id);
-  const [isEditing, setIsEditing] = useState(false);
-  const [labelText, setLabelText] = useState(false);//data.data.label);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [minimized, setMinimized] = useState(false);//data.data.minimized);
-
-  // Add handler for saving the label
-  const handleLabelSave = () => {
-    //data.data.label = labelText;
-    setIsEditing(false);
-  };
-
-  // Handle enter key press
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleLabelSave();
-    }
-  };
-
-  useEffect(() => {
-    console.log('i was minimized', minimized, data.data.label);
-  }, [minimized]);
-
-  const handleMinimize = () => {
-    const newMinimized = !minimized;
-    //data.data.minimized = newMinimized;
-    setMinimized(newMinimized);
-
-    getOpenAPINode(getEdges, id);
-  };
-
-  // Focus input when editing starts
-  useEffect(() => {
-    if (isEditing && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isEditing]);
-
-  useEffect(() => {
-    console.log('labelText', labelText);
-  }, [labelText]);
-
-  useEffect(() => {
-    console.log('i was minimized', data.data.minimized);
-  }, [data.data.minimized]);
-
-  const createNewNode = () => {
-    const newNodeId = `node-${Math.random()}`;
-    
-    addNodes([{ 
-      id: newNodeId,
-      type: 'custom-node',
-      position: { 
-        x: positionAbsoluteX + 200, 
-        y: positionAbsoluteY
-      },
-      data: {
-        data: getRandomNodeData()
-      }
-    }]);
-
-    addEdges([{ 
-      id: `edge-${Math.random()}`,
-      source: id,
-      target: newNodeId,
-    }]);
-  };
 
   return (
     <div className={`react-flow__node-default custom-node`}>
-      <div className="node-header">
-        {isEditing && data.data.type === 'endpoint' ? (
-          <input
-            ref={inputRef}
-            value={labelText}
-            onChange={(e) => setLabelText(e.target.value)}
-            onBlur={handleLabelSave}
-            onKeyPress={handleKeyPress}
-            className="node-input"
-          />
-        ) : (
-          <div onDoubleClick={() => data.data.type === 'endpoint' && setIsEditing(true)}>
-            {data.data.label}
-          </div>
-        )}
-        <div className="node-buttons">
-          <button onClick={handleMinimize} title={minimized ? "Maximize" : "Minimize"}>
-            {minimized ? '□' : '−'}
-          </button>
-          <button onClick={createNewNode} title="Add new node">+</button>
-          <button onClick={handleRemove} disabled={!canRemove()} title="Remove node">×</button>
-        </div>
+      <div>
+        <h1>hi</h1>
       </div>
       <Handle type="target" position={Position.Left} />
       <Handle type="source" position={Position.Right} />

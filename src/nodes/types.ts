@@ -37,8 +37,9 @@ export type Method = {
     summary: string | null;
 }
 export type OpenAPINode = {
-    node: Path | Method;
+    path: Path;
     children: OpenAPINode[];
+    methods: Method[];
 }
 export type CustomNodeData = Node<{ data: OpenAPINode }, 'custom-node'>;
 export type AppNode = BuiltInNode | CustomNodeData;

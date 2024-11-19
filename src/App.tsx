@@ -1,85 +1,35 @@
-import { useCallback, useState } from 'react';
 import {
-  ReactFlow,
-  Panel,
   ReactFlowProvider,
   Background,
   Controls,
   MiniMap,
-  addEdge,
-  useNodesState,
-  useEdgesState,
-  type OnConnect,
-  useReactFlow,
 } from '@xyflow/react';
 
 import '@xyflow/react/dist/style.css';
 
-import { initialNodes, nodeTypes } from './nodes/index';
-import { initialEdges, edgeTypes } from './edges';
-
-const SaveRestore = () => {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const [rfInstance, setRfInstance] = useState(null);
-  const { setViewport } = useReactFlow();
- 
-  const onConnect: OnConnect = useCallback(
-    (connection) => setEdges((edges) => addEdge(connection, edges)),
-    [setEdges]
-  );
-  const onSave = useCallback(() => {
-    if (rfInstance) {
-      const flow = rfInstance.toObject();
-      console.log('flow', flow);
-    } else {
-      console.error('rfInstance is null');
-    }
-  }, [rfInstance]);
- 
-  const onLoad = useCallback(() => {
-    const restoreFlow = async () => {
-      const flow = JSON.parse('');
- 
-      if (flow) {
-        const { x = 0, y = 0, zoom = 1 } = flow.viewport;
-        setNodes(flow.nodes || []);
-        setEdges(flow.edges || []);
-        setViewport({ x, y, zoom });
-      }
-    };
- 
-    restoreFlow();
-  }, [setNodes, setViewport]);
-
-  return (
-    <ReactFlow
-      nodes={nodes}
-      nodeTypes={nodeTypes}
-      onNodesChange={onNodesChange}
-      edges={edges}
-      edgeTypes={edgeTypes}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      // @ts-ignore
-      onInit={setRfInstance}
-      fitView
-    >
-      <Panel position="top-right">
-        <button onClick={onSave}>save</button>
-        <button onClick={onLoad}>load</button>
-      </Panel>
-      <Background />
-      <MiniMap />
-      <Controls />
-    </ReactFlow>
-  );
-};
+import SaveRestore from './SaveRestore';
+import { useState } from 'react';
 
 export default function App() {
+  const [api, setApi] = useState({
+    openapi: '3.0.0',
+    info: {
+      title: 'My New API',
+      version: '0.0.1'
+    },
+    paths: {}
+  });
+  
   return (
     <ReactFlowProvider>
-      <SaveRestore />
+      <div className="api-info" style={{ position: 'absolute', top: 10, left: 10, zIndex: 10, background: 'white', padding: '10px', borderRadius: '4px' }}>
+        <h3>{api.info.title} - v{api.info.version}</h3>
+      </div>
+      <SaveRestore api={api} setApi={setApi}>
+        <Background />
+        <MiniMap />
+        <Controls />
+      </SaveRestore>
     </ReactFlowProvider>
   );
 }
