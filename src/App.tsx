@@ -18,8 +18,8 @@ import { useState, useCallback } from 'react';
 import { LoadApiDialog} from './saverestore/LoadApiDialog';
 import { showApiDialogSave as downloadApi } from './saverestore/SaveApiDialog';
 import { showApiPreviewDialog } from './saverestore/PreviewDialog';
-import { initialNodes, nodeTypes } from './nodes';
-import { edgeTypes, initialEdges } from './edges';
+import { initialNodes, nodeTypes } from './misc/nodes';
+import { edgeTypes, initialEdges } from './misc/edges';
 
 export default function App() {
   const [title, setTitle] = useState('My New API');
