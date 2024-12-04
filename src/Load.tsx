@@ -1,4 +1,6 @@
 import { getLayoutedElements } from './Layout';
+import { MethodNode } from './nodes/method/Method';
+import { PathNode } from './nodes/path/Path';
 
 export const setPaths = (paths: any, direction: 'TB' | 'LR') => {
   // Create nodes from paths
@@ -19,7 +21,9 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR') => {
       if (!nodes.find(n => n.id === nodeId)) {
         nodes.push({
           id: nodeId,
-          data: { label: segment },
+          data: { 
+            label: <PathNode segment={segment} nodeId={nodeId} />
+          },
           type: 'default',
           position: { x: 0, y: 0 }
         });
@@ -46,7 +50,9 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR') => {
             const methodNodeId = `${nodeId}-${method}`;
             nodes.push({
               id: methodNodeId,
-              data: { label: method.toUpperCase() },
+              data: { 
+                label: <MethodNode method={method} />
+              },
               type: 'default',
               position: { x: 0, y: 0 }
             });

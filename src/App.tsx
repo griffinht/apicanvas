@@ -87,7 +87,20 @@ export default function App() {
           <button onClick={() => setDirection('LR')}>horizontal layout</button>
           <button onClick={() => {
             const api = getApi();
-            setApi(api);
+            setApi({
+              openapi: "bruh",
+              info: { title: "bruh", version: "bruh" },
+              paths: {
+                "/bruh": {
+                  get: {
+                    summary: "bruh"
+                  }
+                }
+              }
+            });
+            setTimeout(() => {
+              setApi(api);
+            }, 1000);
           }}>cycle (save then load)</button>
           <button onClick={() => console.log(getPaths(rfInstance))}>get paths</button>
         </Panel>
