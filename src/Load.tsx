@@ -1,29 +1,70 @@
 import { getLayoutedElements } from './Layout';
 
 export const setPaths = (paths: any, direction: 'TB' | 'LR') => {
-  // Create initial nodes
-  const initialNodes = [
-    { id: 'users', data: { label: 'users' } },
-    { id: 'userId', data: { label: '{userId}' } },
-    { id: 'posts', data: { label: 'posts' } },
-    { id: 'users-get', data: { label: 'GET' } },
-    { id: 'users-post', data: { label: 'POST' } },
-    { id: 'userId-get', data: { label: 'GET' } },
-    { id: 'userId-put', data: { label: 'PUT' } },
-    { id: 'userId-delete', data: { label: 'DELETE' } },
-    { id: 'posts-get', data: { label: 'GET' } },
-  ].map(node => ({ ...node, type: 'default', position: { x: 0, y: 0 } }));
+  // Create nodes from paths
+  const nodes: any[] = [];
+  const edges: any[] = [];
 
-  const initialEdges = [
-    { id: 'e-users-get', source: 'users', target: 'users-get' },
-    { id: 'e-users-post', source: 'users', target: 'users-post' },
-    { id: 'e-users-userId', source: 'users', target: 'userId' },
-    { id: 'e-userId-get', source: 'userId', target: 'userId-get' },
-    { id: 'e-userId-put', source: 'userId', target: 'userId-put' },
-    { id: 'e-userId-delete', source: 'userId', target: 'userId-delete' },
-    { id: 'e-userId-posts', source: 'userId', target: 'posts' },
-    { id: 'e-posts-get', source: 'posts', target: 'posts-get' }
-  ].map(edge => ({ ...edge, type: 'smoothstep', animated: true }));
+  // Process each path
+  Object.entries(paths).forEach(([path, pathItem]: [string, any]) => {
+    // Split path into segments and create nodes for each
+    const segments = path.split('/').filter(Boolean);
+    let parentPath = '';
+    let parentId = '';
 
-  return getLayoutedElements(initialNodes, initialEdges, direction);
+    segments.forEach((segment, index) => {
+      const nodeId = segment.startsWith('{') ? segment.slice(1, -1) : segment;
+      
+      // Add path node if it doesn't exist
+      if (!nodes.find(n => n.id === nodeId)) {
+        nodes.push({
+          id: nodeId,
+          data: { label: segment },
+          type: 'default',
+          position: { x: 0, y: 0 }
+        });
+      }
+
+      // Connect to parent path
+      if (parentId) {
+        const edgeId = `e-${parentId}-${nodeId}`;
+        if (!edges.find(e => e.id === edgeId)) {
+          edges.push({
+            id: edgeId,
+            source: parentId,
+            target: nodeId,
+            type: 'smoothstep',
+            animated: true
+          });
+        }
+      }
+
+      // Add method nodes
+      if (index === segments.length - 1) {
+        Object.keys(pathItem).forEach(method => {
+          if (['get', 'post', 'put', 'delete', 'patch'].includes(method)) {
+            const methodNodeId = `${nodeId}-${method}`;
+            nodes.push({
+              id: methodNodeId,
+              data: { label: method.toUpperCase() },
+              type: 'default',
+              position: { x: 0, y: 0 }
+            });
+
+            edges.push({
+              id: `e-${nodeId}-${method}`,
+              source: nodeId,
+              target: methodNodeId,
+              type: 'smoothstep',
+              animated: true
+            });
+          }
+        });
+      }
+
+      parentId = nodeId;
+    });
+  });
+
+  return getLayoutedElements(nodes, edges, direction);
 };

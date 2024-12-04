@@ -32,15 +32,13 @@ export default function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
+  const [direction, setDirection] = useState<'TB' | 'LR'>('TB');
 
-  const setLayout = useCallback(
-    (direction: 'TB' | 'LR') => {
-      const { nodes: layoutedNodes, edges: layoutedEdges } = setPaths(getPaths(rfInstance), direction);
-      setNodes([...layoutedNodes]);
-      setEdges([...layoutedEdges]);
-    },
-    []//[nodes, edges, setNodes, setEdges]
-  );
+  useEffect(() => {
+    const { nodes: layoutedNodes, edges: layoutedEdges } = setPaths(getPaths(rfInstance), direction);
+    setNodes([...layoutedNodes]);
+    setEdges([...layoutedEdges]);
+  }, [direction]);
 
   const onConnect: OnConnect = useCallback(
     (connection) => setEdges((edges) => addEdge(connection, edges)),
@@ -58,15 +56,10 @@ export default function App() {
   const setApi = (newApi: any) => {
     setTitle(newApi.info.title);
     setVersion(newApi.info.version);
-    const { nodes, edges } = setPaths(newApi.paths);
+    const { nodes, edges } = setPaths(newApi.paths, direction);
     setNodes(nodes);
     setEdges(edges);
   };
-
-  useEffect(() => {
-    //console.log(getPaths())
-    //initializeApp(setApi);
-  }, []);
 
   return (
     <ReactFlowProvider>
@@ -90,8 +83,12 @@ export default function App() {
           <LoadApiDialog setApi={setApi} />
           <button onClick={() => downloadApi(getApi())}>save</button>
           <button onClick={() => showApiPreviewDialog(getApi())}>preview</button>
-          <button onClick={() => setLayout('TB')}>vertical layout</button>
-          <button onClick={() => setLayout('LR')}>horizontal layout</button>
+          <button onClick={() => setDirection('TB')}>vertical layout</button>
+          <button onClick={() => setDirection('LR')}>horizontal layout</button>
+          <button onClick={() => {
+            const api = getApi();
+            setApi(api);
+          }}>cycle (save then load)</button>
           <button onClick={() => console.log(getPaths(rfInstance))}>get paths</button>
         </Panel>
       </ReactFlow>
