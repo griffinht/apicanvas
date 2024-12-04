@@ -16,9 +16,9 @@ import {
 import '@xyflow/react/dist/style.css';
 
 import { useState, useCallback, useEffect } from 'react';
-import { LoadApiDialog} from './saverestore/LoadApiDialog';
-import { showApiDialogSave as downloadApi } from './saverestore/SaveApiDialog';
-import { showApiPreviewDialog } from './saverestore/PreviewDialog';
+import { LoadApiDialog} from './menu/LoadApiDialog';
+import { showApiDialogSave as downloadApi } from './menu/SaveApiDialog';
+import { showApiPreviewDialog } from './menu/PreviewDialog';
 import { initialNodes, nodeTypes } from './nodes';
 import { edgeTypes, initialEdges } from '.';
 import { ApiInfoBar } from './ApiInfoBar';
@@ -33,13 +33,13 @@ export default function App() {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
 
-  const onLayout = useCallback(
+  const setLayout = useCallback(
     (direction: 'TB' | 'LR') => {
-      const { nodes: layoutedNodes, edges: layoutedEdges } = setPaths(nodes, edges, direction);
+      const { nodes: layoutedNodes, edges: layoutedEdges } = setPaths(getPaths(rfInstance), direction);
       setNodes([...layoutedNodes]);
       setEdges([...layoutedEdges]);
     },
-    [nodes, edges, setNodes, setEdges]
+    []//[nodes, edges, setNodes, setEdges]
   );
 
   const onConnect: OnConnect = useCallback(
@@ -90,8 +90,8 @@ export default function App() {
           <LoadApiDialog setApi={setApi} />
           <button onClick={() => downloadApi(getApi())}>save</button>
           <button onClick={() => showApiPreviewDialog(getApi())}>preview</button>
-          <button onClick={() => onLayout('TB')}>vertical layout</button>
-          <button onClick={() => onLayout('LR')}>horizontal layout</button>
+          <button onClick={() => setLayout('TB')}>vertical layout</button>
+          <button onClick={() => setLayout('LR')}>horizontal layout</button>
           <button onClick={() => console.log(getPaths(rfInstance))}>get paths</button>
         </Panel>
       </ReactFlow>

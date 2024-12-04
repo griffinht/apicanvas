@@ -1,14 +1,6 @@
-import { Node, Edge } from '@xyflow/react';
-import dagre from '@dagrejs/dagre';
+import { getLayoutedElements } from './Layout';
 
-const nodeWidth = 150;
-const nodeHeight = 40;
-
-interface LayoutOptions {
-  direction?: 'TB' | 'LR';
-}
-
-export const setPaths = (paths: any, options: LayoutOptions = { direction: 'LR' }) => {
+export const setPaths = (paths: any, direction: 'TB' | 'LR') => {
   // Create initial nodes
   const initialNodes = [
     { id: 'users', data: { label: 'users' } },
@@ -33,36 +25,5 @@ export const setPaths = (paths: any, options: LayoutOptions = { direction: 'LR' 
     { id: 'e-posts-get', source: 'posts', target: 'posts-get' }
   ].map(edge => ({ ...edge, type: 'smoothstep', animated: true }));
 
-  return getLayoutedElements(initialNodes, initialEdges, options.direction);
+  return getLayoutedElements(initialNodes, initialEdges, direction);
 };
-
-const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'TB') => {
-  const dagreGraph = new dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
-  const isHorizontal = direction === 'LR';
-  dagreGraph.setGraph({ rankdir: direction });
-
-  nodes.forEach((node) => {
-    dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
-  });
-
-  edges.forEach((edge) => {
-    dagreGraph.setEdge(edge.source, edge.target);
-  });
-
-  dagre.layout(dagreGraph);
-
-  const newNodes = nodes.map((node) => {
-    const nodeWithPosition = dagreGraph.node(node.id);
-    return {
-      ...node,
-      targetPosition: isHorizontal ? 'left' : 'top',
-      sourcePosition: isHorizontal ? 'right' : 'bottom',
-      position: {
-        x: nodeWithPosition.x - nodeWidth / 2,
-        y: nodeWithPosition.y - nodeHeight / 2,
-      },
-    };
-  });
-
-  return { nodes: newNodes, edges };
-}; 
