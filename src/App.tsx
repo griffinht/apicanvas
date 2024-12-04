@@ -20,9 +20,9 @@ import { LoadApiDialog} from './saverestore/LoadApiDialog';
 import { showApiDialogSave as downloadApi } from './saverestore/SaveApiDialog';
 import { showApiPreviewDialog } from './saverestore/PreviewDialog';
 import { initialNodes, nodeTypes } from './nodes';
-import { edgeTypes, initialEdges } from './edges';
+import { edgeTypes, initialEdges } from '.';
 import { ApiInfoBar } from './ApiInfoBar';
-import { AppNode } from './misc/nodes/types';
+//import { AppNode } from './misc/nodes/types';
 
 export default function App() {
   const [title, setTitle] = useState('My New API');
@@ -51,15 +51,26 @@ export default function App() {
             <button 
               style={{ marginTop: '8px' }}
               onClick={() => {
+                const newNodeId = `endpoint-${Date.now()}`;
                 const newNode = {
-                  id: `endpoint-${Date.now()}`,
+                  id: newNodeId,
                   type: 'default',
-                  position: { x: 0, y: 100 },
+                  position: { x: 200, y: 0 },
                   data: { 
                     label: 'GET /new-path'
                   }
                 };
                 setNodes((nds) => [...nds, newNode]);
+                // Create a new edge connecting root to the new node
+                setEdges((eds) => [
+                  ...eds,
+                  {
+                    id: `edge-root-${newNodeId}`,
+                    source: 'root',
+                    target: newNodeId,
+                    type: 'default'
+                  }
+                ]);
               }}
             >
               + Add Endpoint

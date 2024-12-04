@@ -1,5 +1,5 @@
-import { Node } from '@xyflow/react';
+import { Node, NodeTypes } from '@xyflow/react';
 
 export const initialNodes: Node[] = [];
 
-export const nodeTypes = {}; 
+export const nodeTypes: NodeTypes = {}; 
