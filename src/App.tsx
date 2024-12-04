@@ -10,32 +10,66 @@ import {
   useReactFlow,
   addEdge,
   OnConnect,
+  ReactFlowInstance,
 } from '@xyflow/react';
 
 import '@xyflow/react/dist/style.css';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { LoadApiDialog} from './saverestore/LoadApiDialog';
 import { showApiDialogSave as downloadApi } from './saverestore/SaveApiDialog';
 import { showApiPreviewDialog } from './saverestore/PreviewDialog';
-import { initialNodes, nodeTypes } from './misc/nodes';
-import { edgeTypes, initialEdges } from './misc/edges';
+import { initialNodes, nodeTypes } from './nodes';
+import { edgeTypes, initialEdges } from './edges';
+import { ApiInfoBar } from './ApiInfoBar';
+import { AppNode } from './misc/nodes/types';
 
 export default function App() {
   const [title, setTitle] = useState('My New API');
   const [version, setVersion] = useState('0.0.1');
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const [rfInstance, setRfInstance] = useState(null);
+  const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
 
   const getPaths = () => {
-    console.log(rfInstance.toObject());
+    if (!rfInstance) return {};
+    const flowData = rfInstance.toObject();
     // nodes and edges
     return {};
   };
 
   const setPaths = (paths: any) => {
-    console.log(paths);
+    // Clear existing nodes
+    setNodes([{
+      id: 'root',
+      type: 'default',
+      position: { x: 0, y: 0 },
+      data: { 
+        label: (
+          <div>
+            <div>/</div>
+            <button 
+              style={{ marginTop: '8px' }}
+              onClick={() => {
+                const newNode = {
+                  id: `endpoint-${Date.now()}`,
+                  type: 'default',
+                  position: { x: 0, y: 100 },
+                  data: { 
+                    label: 'GET /new-path'
+                  }
+                };
+                setNodes((nds) => [...nds, newNode]);
+              }}
+            >
+              + Add Endpoint
+            </button>
+          </div>
+        )
+      }
+    }]);
+    // Clear existing edges
+    setEdges([]);
   };
 
   const onConnect: OnConnect = useCallback(
@@ -57,23 +91,13 @@ export default function App() {
     setPaths(newApi.paths);
   };
 
+  useEffect(() => {
+    //initializeApp(setApi);
+  }, []);
+
   return (
     <ReactFlowProvider>
-      <div className="api-info">
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value || 'Untitled API')}
-          style={{ fontSize: 'inherit', fontWeight: 'bold' }}
-        />
-        {' - v'}
-        <input
-          type="text"
-          value={version}
-          onChange={(e) => setVersion(e.target.value || '0.0.1')}
-          style={{ fontSize: 'inherit', width: '60px' }}
-        />
-      </div>
+      <ApiInfoBar title={title} setTitle={setTitle} version={version} setVersion={setVersion} />
       <ReactFlow
         nodes={nodes}
         nodeTypes={nodeTypes}
