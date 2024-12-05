@@ -35,7 +35,11 @@ export default function App() {
   const [direction, setDirection] = useState<'TB' | 'LR'>('TB');
 
   useEffect(() => {
-    const { nodes: layoutedNodes, edges: layoutedEdges } = setPaths(getPaths(rfInstance), direction);
+    if (!rfInstance) {
+      console.log('useEffect not firing: rfInstance is not set');
+      return;
+    }
+    const { nodes: layoutedNodes, edges: layoutedEdges } = setPaths(getPaths(rfInstance), direction, rfInstance);
     setNodes([...layoutedNodes]);
     setEdges([...layoutedEdges]);
   }, [direction]);
@@ -56,7 +60,10 @@ export default function App() {
   const setApi = (newApi: any) => {
     setTitle(newApi.info.title);
     setVersion(newApi.info.version);
-    const { nodes, edges } = setPaths(newApi.paths, direction);
+    if (!rfInstance) {
+      throw new Error('rfInstance is not set');
+    }
+    const { nodes, edges } = setPaths(newApi.paths, direction, rfInstance);
     setNodes(nodes);
     setEdges(edges);
   };

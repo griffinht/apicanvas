@@ -1,8 +1,6 @@
 import { ReactFlowInstance } from '@xyflow/react';
 
-export const getPaths = (rfInstance: ReactFlowInstance | null) => {
-  if (!rfInstance) return {};
-  
+export const getPaths = (rfInstance: ReactFlowInstance) => {
   const flowData = rfInstance.toObject();
   const paths: Record<string, any> = {};
   

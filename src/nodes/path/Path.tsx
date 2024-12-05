@@ -2,13 +2,15 @@ import { addMethodNode } from '../method/Add';
 import { addPathNode } from './Add';
 import { editPathSegment } from './Edit';
 import { deletePathNode } from './Delete';
+import { ReactFlowInstance } from '@xyflow/react';
 
 interface PathNodeProps {
   segment: string;
   nodeId: string;
+  rfInstance: ReactFlowInstance;
 }
 
-export function PathNode({ segment, nodeId }: PathNodeProps) {
+export function PathNode({ segment, nodeId, rfInstance }: PathNodeProps) {
   return (
     <div>
       <input 
@@ -20,7 +22,7 @@ export function PathNode({ segment, nodeId }: PathNodeProps) {
       />
       <div>
         <button onClick={() => addMethodNode(nodeId)}>+ GET</button>
-        <button onClick={() => addPathNode(nodeId)}>+ endpoint</button>
+        <button onClick={() => addPathNode(nodeId, rfInstance)}>+ endpoint</button>
         <button onClick={() => deletePathNode(nodeId)}>X</button>
       </div>
     </div>

@@ -1,8 +1,9 @@
+import { ReactFlowInstance } from '@xyflow/react';
 import { getLayoutedElements } from './Layout';
 import { MethodNode } from './nodes/method/Method';
 import { PathNode } from './nodes/path/Path';
 
-export const setPaths = (paths: any, direction: 'TB' | 'LR') => {
+export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFlowInstance) => {
   // Create nodes from paths
   const nodes: any[] = [];
   const edges: any[] = [];
@@ -22,7 +23,7 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR') => {
         nodes.push({
           id: nodeId,
           data: { 
-            label: <PathNode segment={segment} nodeId={nodeId} />
+            label: <PathNode segment={segment} nodeId={nodeId} rfInstance={rfInstance} />
           },
           type: 'default',
           position: { x: 0, y: 0 }
@@ -51,7 +52,7 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR') => {
             nodes.push({
               id: methodNodeId,
               data: { 
-                label: <MethodNode method={method} />
+                label: <MethodNode method={method} nodeId={methodNodeId} />
               },
               type: 'default',
               position: { x: 0, y: 0 }
