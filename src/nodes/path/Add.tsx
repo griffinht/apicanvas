@@ -5,8 +5,6 @@ import { getLayoutedElements } from '../../Layout';
 let nodeIdCounter = 1;
 
 export function addPathNode(parentId: string | null, rfInstance: ReactFlowInstance) {
-  if (!rfInstance) throw new Error('ReactFlow instance not found');
-
   const nodes = rfInstance.getNodes();
   const edges = rfInstance.getEdges();
   

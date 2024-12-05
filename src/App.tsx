@@ -50,6 +50,9 @@ export default function App() {
   );
 
   const getApi = () => {
+    if (!rfInstance) {
+      throw new Error('rfInstance is not set');
+    }
     return {
       openapi: "3.0.0",
       info: { title, version },
