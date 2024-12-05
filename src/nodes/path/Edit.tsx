@@ -1,5 +1,6 @@
 import { ReactFlowInstance } from '@xyflow/react';
 import { PathNodeProps } from './Path';
+import { PathNode } from './Path';
 
 export function editPathSegment(nodeId: string, newSegment: string, rfInstance: ReactFlowInstance, direction: 'TB' | 'LR') {
   rfInstance.setNodes(nodes => nodes.map(node => {
@@ -14,10 +15,7 @@ export function editPathSegment(nodeId: string, newSegment: string, rfInstance: 
         ...node,
         data: {
           ...node.data,
-          label: {
-            type: 'default',
-            props
-          }
+          label: <PathNode {...props} />
         }
       };
     }
