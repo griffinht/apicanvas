@@ -2,7 +2,6 @@ import { ReactFlowInstance } from '@xyflow/react';
 import { getLayoutedElements } from '../../Layout';
 
 export function collapsePathNode(nodeId: string, rfInstance: ReactFlowInstance, direction: 'TB' | 'LR') {
-  // Get current nodes and edges
   const nodes = rfInstance.getNodes();
   const edges = rfInstance.getEdges();
   
@@ -16,39 +15,102 @@ export function collapsePathNode(nodeId: string, rfInstance: ReactFlowInstance, 
     }, [] as string[]);
   };
 
-  // Get all descendants of the target node
   const descendantIds = findDescendants(nodeId);
   
-  // Toggle visibility of descendants
-  const newNodes = nodes.map(node => {
-    if (descendantIds.includes(node.id)) {
-      return {
-        ...node,
-        hidden: !node.hidden // Toggle the hidden state
-      };
-    }
-    return node;
-  });
+  // Get the target node
+  const targetNode = nodes.find(n => n.id === nodeId);
+  const isCollapsing = !targetNode?.data.collapsed;
 
-  // Toggle visibility of connected edges
-  const newEdges = edges.map(edge => {
-    if (descendantIds.includes(edge.target) || descendantIds.includes(edge.source)) {
-      return {
-        ...edge,
-        hidden: !edge.hidden // Toggle the hidden state
-      };
-    }
-    return edge;
-  });
+  if (isCollapsing) {
+    // Save children state before collapsing
+    const childrenState = nodes
+      .filter(node => descendantIds.includes(node.id))
+      .map(node => ({
+        id: node.id,
+        hidden: node.hidden,
+        data: node.data
+      }));
+    console.log('Saving children state:', childrenState);
 
-  // Apply layout to visible nodes
-  const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-    newNodes,
-    newEdges,
-    direction
-  );
+    // Update nodes visibility and store children state
+    const newNodes = nodes.map(node => {
+      if (node.id === nodeId) {
+        return { 
+          ...node, 
+          data: { 
+            ...node.data,
+            collapsed: true,
+            childrenState 
+          }
+        };
+      }
+      if (descendantIds.includes(node.id)) {
+        return { ...node, hidden: true };
+      }
+      return node;
+    });
 
-  // Update flow
-  rfInstance.setNodes(layoutedNodes);
-  rfInstance.setEdges(layoutedEdges);
+    // Update edges
+    const newEdges = edges.map(edge => {
+      if (descendantIds.includes(edge.target) || 
+          (descendantIds.includes(edge.source) && edge.source !== nodeId)) {
+        return { ...edge, hidden: true };
+      }
+      return edge;
+    });
+
+    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+      newNodes,
+      newEdges,
+      direction
+    );
+
+    rfInstance.setNodes(layoutedNodes);
+    rfInstance.setEdges(layoutedEdges);
+
+  } else {
+    // Expanding - restore children state
+    console.log('Restoring children state:', targetNode?.data.childrenState);
+
+    const newNodes = nodes.map(node => {
+      if (node.id === nodeId) {
+        return { 
+          ...node, 
+          data: { 
+            ...node.data,
+            collapsed: false,
+            childrenState: undefined 
+          }
+        };
+      }
+      if (descendantIds.includes(node.id)) {
+        const savedState = targetNode?.data.childrenState?.find(
+          (state: any) => state.id === node.id
+        );
+        return { 
+          ...node, 
+          hidden: savedState?.hidden ?? false,
+          data: savedState?.data ?? node.data
+        };
+      }
+      return node;
+    });
+
+    const newEdges = edges.map(edge => {
+      if (descendantIds.includes(edge.target) || 
+          (descendantIds.includes(edge.source) && edge.source !== nodeId)) {
+        return { ...edge, hidden: false };
+      }
+      return edge;
+    });
+
+    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+      newNodes,
+      newEdges,
+      direction
+    );
+
+    rfInstance.setNodes(layoutedNodes);
+    rfInstance.setEdges(layoutedEdges);
+  }
 }
