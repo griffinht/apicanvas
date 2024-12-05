@@ -8,7 +8,7 @@ interface PathNodeProps {
   segment: string;
   nodeId: string;
   rfInstance: ReactFlowInstance;
-}
+} 
 
 export function PathNode({ segment, nodeId, rfInstance }: PathNodeProps) {
   return (
@@ -16,7 +16,7 @@ export function PathNode({ segment, nodeId, rfInstance }: PathNodeProps) {
       <input 
         type="text"
         defaultValue={segment}
-        onChange={(e) => editPathSegment(nodeId, e.target.value)}
+        onChange={(e) => editPathSegment(nodeId, e.target.value, rfInstance)}
         onClick={(e) => e.stopPropagation()}
         style={{ fontSize: 'inherit', width: '100px' }}
       />
