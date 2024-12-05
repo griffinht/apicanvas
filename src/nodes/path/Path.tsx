@@ -5,7 +5,7 @@ import { deletePathNode } from './Delete';
 import { collapsePathNode } from './Collapse';
 import { ReactFlowInstance } from '@xyflow/react';
 
-interface PathNodeProps {
+export interface PathNodeProps {
   segment: string;
   nodeId: string;
   rfInstance: ReactFlowInstance;
@@ -18,7 +18,7 @@ export function PathNode({ segment, nodeId, rfInstance, direction }: PathNodePro
       <input 
         type="text"
         defaultValue={segment}
-        onChange={(e) => editPathSegment(nodeId, e.target.value, rfInstance)}
+        onChange={(e) => editPathSegment(nodeId, e.target.value, rfInstance, direction)}
         onClick={(e) => e.stopPropagation()}
         style={{ fontSize: 'inherit', width: '100px' }}
       />

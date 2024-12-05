@@ -16,7 +16,7 @@ export function addMethodNode(parentId: string, rfInstance: ReactFlowInstance, d
     id: newNodeId,
     type: 'default',
     data: {
-      label: <MethodNode method="GET" nodeId={newNodeId} direction={direction} />
+      label: <MethodNode method="GET" nodeId={newNodeId} />
     },
     position: { x: 0, y: 0 }
   };

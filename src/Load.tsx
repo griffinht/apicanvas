@@ -12,7 +12,6 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFl
   Object.entries(paths).forEach(([path, pathItem]: [string, any]) => {
     // Split path into segments and create nodes for each
     const segments = path.split('/').filter(Boolean);
-    let parentPath = '';
     let parentId = '';
 
     segments.forEach((segment, index) => {

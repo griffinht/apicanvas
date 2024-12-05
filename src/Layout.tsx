@@ -19,7 +19,7 @@ export const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'T
 
   dagre.layout(dagreGraph);
 
-  const newNodes = nodes.map((node) => {
+  const newNodes: Node[] = nodes.map((node) => {
     const nodeWithPosition = dagreGraph.node(node.id);
     return {
       ...node,
@@ -29,7 +29,7 @@ export const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'T
         x: nodeWithPosition.x - nodeWidth / 2,
         y: nodeWithPosition.y - nodeHeight / 2,
       },
-    };
+    } as Node;
   });
 
   return { nodes: newNodes, edges };

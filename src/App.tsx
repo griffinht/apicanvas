@@ -7,10 +7,10 @@ import {
   ReactFlow,
   useNodesState,
   useEdgesState,
-  useReactFlow,
   addEdge,
   OnConnect,
   ReactFlowInstance,
+  ConnectionLineType,
 } from '@xyflow/react';
 
 import '@xyflow/react/dist/style.css';
@@ -82,7 +82,7 @@ export default function App() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onInit={setRfInstance}
-        connectionLineType="smoothstep"
+        connectionLineType={ConnectionLineType.SmoothStep}
         fitView
       >
         <Background />
@@ -111,7 +111,7 @@ export default function App() {
               setApi(api);
             }, 1000);
           }}>cycle (save then load)</button>
-          <button onClick={() => console.log(getPaths(rfInstance))}>get paths</button>
+          <button onClick={() => { if (!rfInstance) throw new Error('rfInstance is not set'); console.log(getPaths(rfInstance))}}>get paths</button>
         </Panel>
       </ReactFlow>
     </ReactFlowProvider>

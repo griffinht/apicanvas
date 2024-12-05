@@ -1,6 +1,11 @@
 import { ReactFlowInstance } from '@xyflow/react';
-import { MethodNode } from './nodes/method/Method';
-import { PathNode } from './nodes/path/Path';
+import { PathNodeProps } from './nodes/path/Path';
+
+interface NodeData {
+  label: {
+    props: PathNodeProps;
+  };
+}
 
 export const getPaths = (rfInstance: ReactFlowInstance) => {
   const flowData = rfInstance.toObject();
@@ -23,7 +28,7 @@ export const getPaths = (rfInstance: ReactFlowInstance) => {
         const parentEdge = flowData.edges.find((edge: any) => edge.target === currentNodeId);
         if (!parentEdge) break;
         
-        const parentNode = flowData.nodes.find((n: any) => n.id === parentEdge.source);
+        const parentNode = flowData.nodes.find((n: any) => n.id === parentEdge.source) as unknown as { id: string, data: NodeData };
         if (!parentNode) break;
         
         // Get the segment from the parent node's props
