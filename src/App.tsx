@@ -24,7 +24,6 @@ import { edgeTypes, initialEdges } from '.';
 import { ApiInfoBar } from './ApiInfoBar';
 import { getPaths } from './Save';
 import { setPaths } from './Load';
-//import { AppNode } from './misc/nodes/types';
 
 export default function App() {
   const [title, setTitle] = useState('My New API');
