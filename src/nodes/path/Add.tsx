@@ -4,7 +4,7 @@ import { getLayoutedElements } from '../../Layout';
 
 let nodeIdCounter = 1;
 
-export function addPathNode(parentId: string | null, rfInstance: ReactFlowInstance) {
+export function addPathNode(parentId: string | null, rfInstance: ReactFlowInstance, direction: 'TB' | 'LR') {
   const nodes = rfInstance.getNodes();
   const edges = rfInstance.getEdges();
   
@@ -16,7 +16,7 @@ export function addPathNode(parentId: string | null, rfInstance: ReactFlowInstan
     id: newNodeId,
     type: 'default',
     data: {
-      label: <PathNode segment="new-endpoint" nodeId={newNodeId} rfInstance={rfInstance} />
+      label: <PathNode segment="new-endpoint" nodeId={newNodeId} rfInstance={rfInstance} direction={direction} />
     },
     position: { x: 0, y: 0 } // Position will be set by layout
   };
@@ -37,7 +37,7 @@ export function addPathNode(parentId: string | null, rfInstance: ReactFlowInstan
   const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
     [...nodes, newNode],
     newEdges,
-    'TB'
+    direction
   );
 
   // Update flow

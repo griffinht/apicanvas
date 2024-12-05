@@ -23,7 +23,7 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFl
         nodes.push({
           id: nodeId,
           data: { 
-            label: <PathNode segment={segment} nodeId={nodeId} rfInstance={rfInstance} />
+            label: <PathNode segment={segment} nodeId={nodeId} rfInstance={rfInstance} direction={direction} />
           },
           type: 'default',
           position: { x: 0, y: 0 }

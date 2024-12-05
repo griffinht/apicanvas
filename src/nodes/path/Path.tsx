@@ -8,9 +8,10 @@ interface PathNodeProps {
   segment: string;
   nodeId: string;
   rfInstance: ReactFlowInstance;
+  direction: 'TB' | 'LR';
 } 
 
-export function PathNode({ segment, nodeId, rfInstance }: PathNodeProps) {
+export function PathNode({ segment, nodeId, rfInstance, direction }: PathNodeProps) {
   return (
     <div>
       <input 
@@ -21,8 +22,8 @@ export function PathNode({ segment, nodeId, rfInstance }: PathNodeProps) {
         style={{ fontSize: 'inherit', width: '100px' }}
       />
       <div>
-        <button onClick={() => addMethodNode(nodeId, rfInstance)}>+ GET</button>
-        <button onClick={() => addPathNode(nodeId, rfInstance)}>+ endpoint</button>
+        <button onClick={() => addMethodNode(nodeId, rfInstance, direction)}>+ GET</button>
+        <button onClick={() => addPathNode(nodeId, rfInstance, direction)}>+ endpoint</button>
         <button onClick={() => deletePathNode(nodeId, rfInstance)}>X</button>
       </div>
     </div>

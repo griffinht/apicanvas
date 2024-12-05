@@ -4,7 +4,7 @@ import { getLayoutedElements } from '../../Layout';
 
 let methodIdCounter = 1;
 
-export function addMethodNode(parentId: string, rfInstance: ReactFlowInstance) {
+export function addMethodNode(parentId: string, rfInstance: ReactFlowInstance, direction: 'TB' | 'LR') {
   const nodes = rfInstance.getNodes();
   const edges = rfInstance.getEdges();
   
@@ -16,7 +16,7 @@ export function addMethodNode(parentId: string, rfInstance: ReactFlowInstance) {
     id: newNodeId,
     type: 'default',
     data: {
-      label: <MethodNode method="GET" nodeId={newNodeId} />
+      label: <MethodNode method="GET" nodeId={newNodeId} direction={direction} />
     },
     position: { x: 0, y: 0 }
   };
@@ -34,7 +34,7 @@ export function addMethodNode(parentId: string, rfInstance: ReactFlowInstance) {
   const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
     [...nodes, newNode],
     [...edges, newEdge],
-    'TB'
+    direction
   );
 
   // Update flow

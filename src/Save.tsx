@@ -1,17 +1,20 @@
 import { ReactFlowInstance } from '@xyflow/react';
+import { MethodNode } from './nodes/method/Method';
+import { PathNode } from './nodes/path/Path';
 
 export const getPaths = (rfInstance: ReactFlowInstance) => {
   const flowData = rfInstance.toObject();
   const paths: Record<string, any> = {};
-  
-  // Group nodes by their complete path
   const pathGroups: Record<string, any[]> = {};
   
   flowData.nodes.forEach((node: any) => {
-    if (node.data.label.includes('GET') || 
-        node.data.label.includes('POST') || 
-        node.data.label.includes('PUT') || 
-        node.data.label.includes('DELETE')) {
+    // Check if this is a method node by checking if it has a method prop
+    const methodProps = node.data.label.props;
+    const isMethodNode = methodProps && 'method' in methodProps;
+    
+    if (isMethodNode) {
+      const method = methodProps.method.toLowerCase();
+      
       // Build the complete path by traversing edges backwards
       let currentNodeId = node.id;
       const pathParts: string[] = [];
@@ -23,7 +26,9 @@ export const getPaths = (rfInstance: ReactFlowInstance) => {
         const parentNode = flowData.nodes.find((n: any) => n.id === parentEdge.source);
         if (!parentNode) break;
         
-        pathParts.unshift(parentNode.data.label);
+        // Get the segment from the parent node's props
+        const segment = parentNode.data.label.props.segment;
+        pathParts.unshift(segment);
         currentNodeId = parentNode.id;
       }
 
@@ -32,7 +37,7 @@ export const getPaths = (rfInstance: ReactFlowInstance) => {
         pathGroups[pathKey] = [];
       }
       pathGroups[pathKey].push({
-        method: node.data.label.toLowerCase(),
+        method,
         nodeId: node.id
       });
     }
