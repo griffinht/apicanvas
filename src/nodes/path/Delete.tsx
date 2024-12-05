@@ -1,7 +1,7 @@
 import { ReactFlowInstance } from '@xyflow/react';
 import { getLayoutedElements } from '../../Layout';
 
-export function deletePathNode(nodeId: string, rfInstance: ReactFlowInstance) {
+export function deletePathNode(nodeId: string, rfInstance: ReactFlowInstance, direction: 'TB' | 'LR') {
   // Get current nodes and edges
   const nodes = rfInstance.getNodes();
   const edges = rfInstance.getEdges();
@@ -23,7 +23,7 @@ export function deletePathNode(nodeId: string, rfInstance: ReactFlowInstance) {
   const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
     newNodes,
     newEdges,
-    'TB'
+    direction
   );
 
   // Update flow

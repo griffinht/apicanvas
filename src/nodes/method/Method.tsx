@@ -1,17 +1,20 @@
+import { ReactFlowInstance } from '@xyflow/react';
 import { deleteMethodNode } from './Delete';
 import { editMethod } from './Edit';
 
 interface MethodNodeProps {
   method: string;
   nodeId: string;
+  rfInstance: ReactFlowInstance;
+  direction: 'TB' | 'LR'; 
 }
 
-export function MethodNode({ method, nodeId }: MethodNodeProps) {
+export function MethodNode({ method, nodeId, rfInstance, direction }: MethodNodeProps) {
   return (
     <div>
       <select 
         defaultValue={method.toUpperCase()}
-        onChange={(e) => editMethod(nodeId, e.target.value)}
+        onChange={(e) => editMethod(nodeId, e.target.value, rfInstance, direction)}
         onClick={(e) => e.stopPropagation()}
     >
       <option value="GET">GET</option>
@@ -20,7 +23,7 @@ export function MethodNode({ method, nodeId }: MethodNodeProps) {
       <option value="DELETE">DELETE</option>
         <option value="PATCH">PATCH</option>
       </select>
-      <button onClick={() => deleteMethodNode(nodeId)}>X</button>
+      <button onClick={() => deleteMethodNode(nodeId, rfInstance, direction)}>X</button>
     </div>
   );
 } 

@@ -71,7 +71,7 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFl
             nodes.push({
               id: methodNodeId,
               data: { 
-                label: <MethodNode method={key} nodeId={methodNodeId} />
+                label: <MethodNode method={key} nodeId={methodNodeId} rfInstance={rfInstance} direction={direction} />
               },
               type: 'default',
               position: { x: 0, y: 0 },

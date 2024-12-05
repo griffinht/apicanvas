@@ -25,7 +25,7 @@ export function PathNode({ segment, nodeId, rfInstance, direction }: PathNodePro
       <div>
         <button onClick={() => addMethodNode(nodeId, rfInstance, direction)}>+ GET</button>
         <button onClick={() => addPathNode(nodeId, rfInstance, direction)}>+ endpoint</button>
-        <button onClick={() => deletePathNode(nodeId, rfInstance)}>X</button>
+        <button onClick={() => deletePathNode(nodeId, rfInstance, direction)}>X</button>
         <button onClick={() => collapsePathNode(nodeId, rfInstance, direction)}>-</button>
       </div>
     </div>
