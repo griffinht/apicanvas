@@ -1,6 +1,6 @@
 import { ReactFlowInstance } from '@xyflow/react';
 import { getLayoutedElements } from './Layout';
-import { MethodNode } from './nodes/method/Method';
+import { createMethodNode } from './nodes/method/Method';
 import { createPathNode } from './nodes/path/Path';
 
 export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFlowInstance) => {
@@ -65,15 +65,13 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFl
         Object.entries(pathItem).forEach(([key, value]) => {
           if (['get', 'post', 'put', 'delete', 'patch'].includes(key)) {
             const methodNodeId = `${nodeId}-${key}`;
-            nodes.push({
-              id: methodNodeId,
-              data: { 
-                label: <MethodNode method={key} nodeId={methodNodeId} rfInstance={rfInstance} direction={direction} />
-              },
-              type: 'default',
-              position: { x: 0, y: 0 },
-              hidden: isChildOfCollapsed || isCollapsed
-            });
+            nodes.push(createMethodNode(
+              key,
+              methodNodeId,
+              rfInstance,
+              direction,
+              isChildOfCollapsed || isCollapsed
+            ));
 
             edges.push({
               id: `e-${nodeId}-${key}`,

@@ -1,4 +1,4 @@
-import { ReactFlowInstance } from '@xyflow/react';
+import { ReactFlowInstance, Node } from '@xyflow/react';
 import { deleteMethodNode } from './Delete';
 import { editMethod } from './Edit';
 
@@ -9,7 +9,7 @@ interface MethodNodeProps {
   direction: 'TB' | 'LR'; 
 }
 
-export function MethodNode({ method, nodeId, rfInstance, direction }: MethodNodeProps) {
+export function getMethodNodeStyle(method: string) {
   const getMethodColor = (method: string) => {
     switch (method.toUpperCase()) {
       case 'GET': return '#4CAF50';
@@ -21,14 +21,48 @@ export function MethodNode({ method, nodeId, rfInstance, direction }: MethodNode
     }
   };
 
+  return {
+    background: getMethodColor(method),
+    padding: '4px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: '4px',
+  };
+}
+
+export function createMethodNode(
+  method: string,
+  nodeId: string,
+  rfInstance: ReactFlowInstance,
+  direction: 'TB' | 'LR',
+  isHidden: boolean
+): Node {
+  return {
+    id: nodeId,
+    data: { 
+      label: <MethodNode 
+        method={method} 
+        nodeId={nodeId} 
+        rfInstance={rfInstance} 
+        direction={direction} 
+      />
+    },
+    type: 'default',
+    position: { x: 0, y: 0 },
+    hidden: isHidden,
+    style: getMethodNodeStyle(method)
+  };
+}
+
+export function MethodNode({ method, nodeId, rfInstance, direction }: MethodNodeProps) {
   return (
-    <div style={{ 
-      backgroundColor: getMethodColor(method),
-      padding: '8px',
-      borderRadius: '4px',
+    <div style={{
       display: 'flex',
       alignItems: 'center',
-      gap: '8px'
+      gap: '8px',
+      width: '100%',
+      height: '100%',
     }}>
       <select 
         defaultValue={method.toUpperCase()}
@@ -46,7 +80,17 @@ export function MethodNode({ method, nodeId, rfInstance, direction }: MethodNode
         <option value="DELETE">DELETE</option>
         <option value="PATCH">PATCH</option>
       </select>
-      <button onClick={() => deleteMethodNode(nodeId, rfInstance, direction)}>X</button>
+      <button 
+        onClick={() => deleteMethodNode(nodeId, rfInstance, direction)}
+        style={{
+          backgroundColor: 'transparent',
+          border: 'none',
+          color: method.toUpperCase() === 'POST' ? 'black' : 'white',
+          cursor: 'pointer'
+        }}
+      >
+        X
+      </button>
     </div>
   );
 } 
