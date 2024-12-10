@@ -6,27 +6,40 @@ export function deletePathNode(nodeId: string, rfInstance: ReactFlowInstance, di
   const nodes = rfInstance.getNodes();
   const edges = rfInstance.getEdges();
 
-  // Check if node has any children (outgoing edges)
-  const hasChildren = edges.some(edge => edge.source === nodeId);
-  if (hasChildren) {
-    console.warn('Cannot delete node with children');
-    return;
+  // Find all descendant nodes recursively
+  const nodesToDelete = new Set<string>([nodeId]);
+  let changed = true;
+  while (changed) {
+    changed = false;
+    edges.forEach(edge => {
+      if (nodesToDelete.has(edge.source) && !nodesToDelete.has(edge.target)) {
+        nodesToDelete.add(edge.target);
+        changed = true;
+      }
+    });
   }
 
-  // Remove the target node and any connected edges
-  const newNodes = nodes.filter(node => node.id !== nodeId);
+  // If we're deleting more than one node, prompt for confirmation
+  if (nodesToDelete.size > 1) {
+    const confirmDelete = window.confirm(
+      `This will delete ${nodesToDelete.size} nodes. Are you sure?`
+    );
+    if (!confirmDelete) return;
+  }
+
+  // Remove the target nodes and any connected edges
+  const newNodes = nodes.filter(node => !nodesToDelete.has(node.id));
   const newEdges = edges.filter(edge => 
-    edge.source !== nodeId && edge.target !== nodeId
+    !nodesToDelete.has(edge.source) && !nodesToDelete.has(edge.target)
   );
 
-  // Apply layout
+  // Apply layout and update flow
   const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
     newNodes,
     newEdges,
     direction
   );
 
-  // Update flow
   rfInstance.setNodes(layoutedNodes);
   rfInstance.setEdges(layoutedEdges);
 }
