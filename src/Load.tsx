@@ -1,7 +1,7 @@
 import { ReactFlowInstance } from '@xyflow/react';
 import { getLayoutedElements } from './Layout';
 import { MethodNode } from './nodes/method/Method';
-import { PathNode } from './nodes/path/Path';
+import { createPathNode } from './nodes/path/Path';
 
 export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFlowInstance) => {
   const nodes: any[] = [];
@@ -36,16 +36,13 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFl
 
       // Add path node if it doesn't exist
       if (!nodes.find(n => n.id === nodeId)) {
-        nodes.push({
-          id: nodeId,
-          data: { 
-            label: <PathNode segment={segment} nodeId={nodeId} rfInstance={rfInstance} direction={direction} />,
-            collapsed: isCollapsed
-          },
-          type: 'default',
-          position: { x: 0, y: 0 },
-          hidden: isChildOfCollapsed
-        });
+        nodes.push(createPathNode(
+          segment,
+          nodeId,
+          rfInstance,
+          direction,
+          isChildOfCollapsed
+        ));
       }
 
       // Connect to parent path

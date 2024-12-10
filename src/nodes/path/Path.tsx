@@ -3,33 +3,78 @@ import { addPathNode } from './Add';
 import { editPathSegment } from './Edit';
 import { deletePathNode } from './Delete';
 import { collapsePathNode } from './Collapse';
-import { ReactFlowInstance } from '@xyflow/react';
+import { ReactFlowInstance, Node } from '@xyflow/react';
 
 export interface PathNodeProps {
   segment: string;
   nodeId: string;
   rfInstance: ReactFlowInstance;
   direction: 'TB' | 'LR';
-} 
+}
+
+export function getPathNodeStyle(segment: string) {
+  const isParameter = (segment: string) => segment.match(/^\{.*\}$/);
+  
+  return {
+    background: isParameter(segment) ? '#2d3748' : '#fff',
+    border: '1px solid #2d3748',
+    width: '24px',
+    height: '24px',
+    padding: 0,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: '2px',
+  };
+}
+
+export function createPathNode(
+  segment: string, 
+  nodeId: string, 
+  rfInstance: ReactFlowInstance, 
+  direction: 'TB' | 'LR',
+  isHidden: boolean
+): Node {
+  return {
+    id: nodeId,
+    data: { 
+      label: <PathNode 
+        segment={segment} 
+        nodeId={nodeId} 
+        rfInstance={rfInstance} 
+        direction={direction} 
+      />
+    },
+    type: 'default',
+    position: { x: 0, y: 0 },
+    hidden: isHidden,
+    style: getPathNodeStyle(segment)
+  };
+}
 
 export function PathNode({ segment, nodeId, rfInstance, direction }: PathNodeProps) {
-  // Helper function to determine if segment is a parameter
-  const isParameter = (segment: string) => segment.match(/^\{.*\}$/);
-
   return (
     <div style={{
       display: 'flex',
       alignItems: 'center',
-      gap: '8px',
       position: 'relative',
+      width: '100%',
+      height: '100%',
+      justifyContent: 'center',
     }}>
       <div style={{
-        backgroundColor: isParameter(segment) ? '#2d3748' : '#f0f0f0',
-        padding: '8px 12px',
-        borderRadius: '4px',
+        position: 'absolute',
+        right: '100%',
+        top: '100%',
+        transform: 'translate(0, -50%)',
+        whiteSpace: 'nowrap',
         fontFamily: 'monospace',
         fontSize: '1.1em',
-        color: isParameter(segment) ? '#f0f0f0' : '#2d3748',
+        color: '#2d3748',
+        pointerEvents: 'none',
+        zIndex: 20,
+        marginRight: '8px',
+        marginTop: '4px',
       }}>
         {segment}
       </div>
@@ -45,7 +90,10 @@ export function PathNode({ segment, nodeId, rfInstance, direction }: PathNodePro
         transition: 'opacity 0.2s ease',
         position: 'absolute',
         left: '100%',
+        top: '50%',
+        transform: 'translateY(-50%)',
         marginLeft: '8px',
+        zIndex: 10,
       }}
       onMouseEnter={e => e.currentTarget.style.opacity = '1'}
       onMouseLeave={e => e.currentTarget.style.opacity = '0'}
