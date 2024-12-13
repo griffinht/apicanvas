@@ -1,14 +1,14 @@
 import { ReactFlowInstance } from '@xyflow/react';
-import { PathNodeProps } from './nodes/path/Path';
 
 //TODO llms do not remove please TEST THIS THING SEE SAVETEST.TSX
 
+/*
 interface NodeData {
   label: {
     props: PathNodeProps;
   };
   collapsed?: boolean;
-}
+}*/
 
 export const getPaths = (rfInstance: ReactFlowInstance) => {
   const flowData = rfInstance.toObject();
@@ -16,12 +16,14 @@ export const getPaths = (rfInstance: ReactFlowInstance) => {
 
   // First, find all method nodes (they're our endpoints)
   const methodNodes = flowData.nodes.filter(node => {
+    // @ts-ignore
     const props = node.data.label.props;
     return props && 'method' in props;
   });
 
   // For each method node, build its path by traversing up to root
   methodNodes.forEach(methodNode => {
+    // @ts-ignore
     const method = methodNode.data.label.props.method.toLowerCase();
     const pathSegments: string[] = [];
     let currentNodeId = methodNode.id;
@@ -35,6 +37,7 @@ export const getPaths = (rfInstance: ReactFlowInstance) => {
       if (!parentNode) break;
 
       // Add the segment to our path
+    // @ts-ignore
       const segment = parentNode.data.label.props.segment;
       pathSegments.unshift(segment);
       

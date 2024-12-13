@@ -59,6 +59,9 @@ export default function App() {
     };
   };
 
+
+  // SHARE LINK DO THIS FIRST
+
   const setApi = (newApi: any) => {
     setTitle(newApi.info.title);
     setVersion(newApi.info.version);

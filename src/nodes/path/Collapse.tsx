@@ -84,6 +84,7 @@ export function collapsePathNode(nodeId: string, rfInstance: ReactFlowInstance, 
         };
       }
       if (descendantIds.includes(node.id)) {
+        // @ts-ignore
         const savedState = targetNode?.data.childrenState?.find(
           (state: any) => state.id === node.id
         );

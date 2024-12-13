@@ -62,6 +62,7 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFl
 
       // Add method nodes at the leaf level
       if (index === segments.length - 1) {
+        // @ts-ignore
         Object.entries(pathItem).forEach(([key, value]) => {
           if (['get', 'post', 'put', 'delete', 'patch'].includes(key)) {
             const methodNodeId = `${nodeId}-${key}`;

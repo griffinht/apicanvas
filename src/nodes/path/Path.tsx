@@ -1,5 +1,6 @@
 import { addMethodNode } from '../method/Add';
 import { addPathNode } from './Add';
+// @ts-ignore
 import { editPathSegment } from './Edit';
 import { deletePathNode } from './Delete';
 import { collapsePathNode } from './Collapse';
