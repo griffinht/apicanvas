@@ -1,41 +1,49 @@
-import { Node, Edge } from '@xyflow/react';
-import dagre from '@dagrejs/dagre';
+import { Node, Edge, Position } from '@xyflow/react';
+import { positionPathNodes } from './nodes/path/Layout';
 
 const nodeWidth = 200;
 const nodeHeight = 60;
 
-export const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'TB') => {
-  const dagreGraph = new dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
-  const isHorizontal = direction === 'LR';
-  dagreGraph.setGraph({
-    rankdir: direction,
-    nodesep: 0,
-    ranksep: 100,
-    edgesep: 0
-  });
-
-  nodes.forEach((node) => {
-    dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
-  });
-
-  edges.forEach((edge) => {
-    dagreGraph.setEdge(edge.source, edge.target);
-  });
-
-  dagre.layout(dagreGraph);
-
-  const newNodes: Node[] = nodes.map((node) => {
-    const nodeWithPosition = dagreGraph.node(node.id);
+const positionSchemaNodes = (
+  nodes: Node[],
+  mainGraphBounds: { minX: number; maxX: number; minY: number; maxY: number },
+  nodeWidth: number,
+  nodeHeight: number,
+  isHorizontal: boolean
+): Node[] => {
+  const schemaNodes = nodes.filter(node => node.id.startsWith('schema-'));
+  
+  return nodes.map(node => {
+    if (!node.id.startsWith('schema-')) return node;
+    
+    const index = schemaNodes.findIndex(n => n.id === node.id);
+    const position = {
+      x: isHorizontal ? mainGraphBounds.maxX + 200 : mainGraphBounds.minX + (index * (nodeWidth + 50)),
+      y: isHorizontal ? mainGraphBounds.minY + (index * (nodeHeight + 50)) : mainGraphBounds.maxY + 200
+    };
+    
     return {
       ...node,
-      targetPosition: isHorizontal ? 'left' : 'top',
-      sourcePosition: isHorizontal ? 'right' : 'bottom',
       position: {
-        x: nodeWithPosition.x - nodeWidth / 2,
-        y: nodeWithPosition.y - nodeHeight / 2,
+        x: position.x - nodeWidth / 2,
+        y: position.y - nodeHeight / 2
       },
-    } as Node;
+      sourcePosition: isHorizontal ? Position.Left : Position.Top,
+      targetPosition: isHorizontal ? Position.Right : Position.Bottom
+    };
   });
+};
 
-  return { nodes: newNodes, edges };
+export const getLayoutedElements = (nodes: Node[], edges: Edge[], direction: 'TB' | 'LR') => {
+  // Position path nodes first
+  const { nodes: positionedPathNodes, mainGraphBounds } = positionPathNodes(nodes, edges, direction);
+
+  // Position schema nodes using the path bounds
+  const schemaNodes = nodes.filter(node => node.id.startsWith('schema-'));
+  const allNodes = [
+    ...positionedPathNodes,
+    ...positionSchemaNodes(schemaNodes, mainGraphBounds, nodeWidth, nodeHeight, direction === 'LR')
+  ];
+
+  return { nodes: allNodes, edges };
 }; 

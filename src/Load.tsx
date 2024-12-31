@@ -2,6 +2,7 @@ import { ReactFlowInstance } from '@xyflow/react';
 import { getLayoutedElements } from './Layout';
 import { createMethodNode } from './nodes/method/Method';
 import { createPathNode } from './nodes/path/Path';
+import { createSchemaNode, getMockSchemas } from './components/schemas/Schema';
 
 export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFlowInstance) => {
   const nodes: any[] = [];
@@ -90,6 +91,11 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFl
     });
   });
 
-  // Apply layout
+  // Add schema nodes
+  const mockSchemas = getMockSchemas();
+  Object.keys(mockSchemas).forEach((schemaName) => {
+    nodes.push(createSchemaNode(schemaName));
+  });
+
   return getLayoutedElements(nodes, edges, direction);
 };
