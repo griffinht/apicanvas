@@ -1,5 +1,5 @@
 import { Node, Edge, Position } from '@xyflow/react';
-import { positionPathNodes } from './nodes/path/Layout';
+import { positionPathNodes } from './openapi/paths/Layout';
 
 const nodeWidth = 200;
 const nodeHeight = 60;

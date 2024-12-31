@@ -1,5 +1,5 @@
 import { ReactFlowInstance } from '@xyflow/react';
-import { getLayoutedElements } from '../../Layout';
+import { getLayoutedElements } from '../../../Layout';
 
 export function deleteMethodNode(nodeId: string, rfInstance: ReactFlowInstance, direction: 'TB' | 'LR') {
   // Get current nodes and edges

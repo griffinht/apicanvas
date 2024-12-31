@@ -1,6 +1,6 @@
 import { Node, Edge, ReactFlowInstance } from '@xyflow/react';
 import { MethodNode } from './Method';
-import { getLayoutedElements } from '../../Layout';
+import { getLayoutedElements } from '../../../Layout';
 
 let methodIdCounter = 1;
 
