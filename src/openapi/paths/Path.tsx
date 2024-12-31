@@ -1,4 +1,4 @@
-import { addMethodNode } from './method/Add';
+import { addMethodNode } from './methods/Add';
 import { addPathNode } from './Add';
 // @ts-ignore
 import { editPathSegment } from './Edit';

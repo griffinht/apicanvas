@@ -1,12 +1,16 @@
-import { ReactFlowInstance, Node } from '@xyflow/react';
+import { ReactFlowInstance, Node, Edge } from '@xyflow/react';
 import { deleteMethodNode } from './Delete';
 import { editMethod } from './Edit';
+import { createHeaderNodes } from './headers/Headers';
+import { createParameterNodes } from './parameters/Parameters';
+import { createResponseNodes } from './responses/Responses';
 
-interface MethodNodeProps {
+export interface MethodNodeProps {
   method: string;
   nodeId: string;
+  parentId?: string;
   rfInstance: ReactFlowInstance;
-  direction: 'TB' | 'LR'; 
+  direction: 'TB' | 'LR';
 }
 
 export function getMethodNodeStyle(method: string) {
@@ -36,23 +40,46 @@ export function createMethodNode(
   nodeId: string,
   rfInstance: ReactFlowInstance,
   direction: 'TB' | 'LR',
-  isHidden: boolean
-): Node {
-  return {
+  isHidden: boolean,
+  parentId?: string
+): Node[] {
+  const methodNode = {
     id: nodeId,
     data: { 
       label: <MethodNode 
         method={method} 
-        nodeId={nodeId} 
+        nodeId={nodeId}
+        parentId={parentId}
         rfInstance={rfInstance} 
         direction={direction} 
-      />
+      />,
+      parentId
     },
     type: 'default',
     position: { x: 0, y: 0 },
     hidden: isHidden,
     style: getMethodNodeStyle(method)
   };
+
+  const headerNodes = createHeaderNodes(
+    `${nodeId}-header`,
+    rfInstance,
+    isHidden
+  );
+
+  const parameterNodes = createParameterNodes(
+    `${nodeId}-param`,
+    rfInstance,
+    isHidden
+  );
+
+  const responseNodes = createResponseNodes(
+    `${nodeId}-response`,
+    rfInstance,
+    isHidden
+  );
+
+  return [methodNode, ...headerNodes, ...parameterNodes, ...responseNodes];
 }
 
 export function MethodNode({ method, nodeId, rfInstance, direction }: MethodNodeProps) {

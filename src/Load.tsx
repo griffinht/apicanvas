@@ -1,6 +1,6 @@
 import { ReactFlowInstance } from '@xyflow/react';
 import { getLayoutedElements } from './Layout';
-import { createMethodNode } from './openapi/paths/method/Method';
+import { createMethodNode } from './openapi/paths/methods/Method';
 import { createPathNode } from './openapi/paths/Path';
 import { createSchemaNode, getMockSchemas } from './openapi/components/schemas/Schema';
 
@@ -67,22 +67,88 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFl
         Object.entries(pathItem).forEach(([key, value]) => {
           if (['get', 'post', 'put', 'delete', 'patch'].includes(key)) {
             const methodNodeId = `${nodeId}-${key}`;
-            nodes.push(createMethodNode(
+            nodes.push(...createMethodNode(
               key,
               methodNodeId,
               rfInstance,
               direction,
-              isChildOfCollapsed || isCollapsed
+              isChildOfCollapsed || isCollapsed,
+              nodeId
             ));
 
             edges.push({
-              id: `e-${nodeId}-${key}`,
+              id: `e-${nodeId}-${methodNodeId}`,
               source: nodeId,
               target: methodNodeId,
               type: 'smoothstep',
               animated: true,
               hidden: isChildOfCollapsed || isCollapsed
             });
+
+            // Add edges for header, parameter, and response nodes
+            edges.push({
+              id: `e-${methodNodeId}-header`,
+              source: methodNodeId,
+              target: `${methodNodeId}-header`,
+              type: 'smoothstep',
+              animated: true,
+              hidden: isChildOfCollapsed || isCollapsed
+            });
+
+            edges.push({
+              id: `e-${methodNodeId}-param`,
+              source: methodNodeId,
+              target: `${methodNodeId}-param`,
+              type: 'smoothstep',
+              animated: true,
+              hidden: isChildOfCollapsed || isCollapsed
+            });
+
+            edges.push({
+              id: `e-${methodNodeId}-response`,
+              source: methodNodeId,
+              target: `${methodNodeId}-response`,
+              type: 'smoothstep',
+              animated: true,
+              hidden: isChildOfCollapsed || isCollapsed
+            });
+
+            // Add edges for child response nodes (2-3 random ones)
+            const responseCount = Math.floor(Math.random() * 2) + 2; // 2-3 responses
+            for (let i = 0; i < responseCount; i++) {
+              edges.push({
+                id: `e-${methodNodeId}-response-${i + 1}`,
+                source: `${methodNodeId}-response`,
+                target: `${methodNodeId}-response-${i + 1}`,
+                type: 'smoothstep',
+                animated: true,
+                hidden: isChildOfCollapsed || isCollapsed
+              });
+            }
+
+            const headerCount = Math.floor(Math.random() * 4); // 0-3 headers
+            for (let i = 0; i < headerCount; i++) {
+              edges.push({
+                id: `e-${methodNodeId}-header-${i + 1}`,
+                source: `${methodNodeId}-header`,
+                target: `${methodNodeId}-header-${i + 1}`,
+                type: 'smoothstep',
+                animated: true,
+                hidden: isChildOfCollapsed || isCollapsed
+              });
+            }
+
+            const paramCount = Math.floor(Math.random() * 4); // 0-3 parameters
+            for (let i = 0; i < paramCount; i++) {
+              edges.push({
+                id: `e-${methodNodeId}-param-${i + 1}`,
+                source: `${methodNodeId}-param`,
+                target: `${methodNodeId}-param-${i + 1}`,
+                type: 'smoothstep',
+                animated: true,
+                hidden: isChildOfCollapsed || isCollapsed
+              });
+            }
           }
         });
       }
