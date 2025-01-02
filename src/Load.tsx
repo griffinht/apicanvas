@@ -116,10 +116,11 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFl
             // Add edges for child response nodes (2-3 random ones)
             const responseCount = Math.floor(Math.random() * 2) + 2; // 2-3 responses
             for (let i = 0; i < responseCount; i++) {
+              const responseNodeId = `${methodNodeId}-response-${i + 1}`;
               edges.push({
                 id: `e-${methodNodeId}-response-${i + 1}`,
                 source: `${methodNodeId}-response`,
-                target: `${methodNodeId}-response-${i + 1}`,
+                target: responseNodeId,
                 type: 'smoothstep',
                 animated: true,
                 hidden: isChildOfCollapsed || isCollapsed
@@ -144,6 +145,19 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFl
                 id: `e-${methodNodeId}-param-${i + 1}`,
                 source: `${methodNodeId}-param`,
                 target: `${methodNodeId}-param-${i + 1}`,
+                type: 'smoothstep',
+                animated: true,
+                hidden: isChildOfCollapsed || isCollapsed
+              });
+            }
+
+            // Add edges for response value nodes
+            for (let i = 0; i < responseCount; i++) {
+              const responseNodeId = `${methodNodeId}-response-${i + 1}`;
+              edges.push({
+                id: `e-${responseNodeId}-value`,
+                source: responseNodeId,
+                target: `${responseNodeId}-value`,
                 type: 'smoothstep',
                 animated: true,
                 hidden: isChildOfCollapsed || isCollapsed

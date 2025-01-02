@@ -64,11 +64,11 @@ export default function App() {
 
   const setApi = (newApi: any) => {
     try {
-      setTitle(newApi.info.title);
-      setVersion(newApi.info.version);
       if (!rfInstance) {
         throw new Error('rfInstance is not set');
       }
+      setTitle(newApi.info.title);
+      setVersion(newApi.info.version);
       const { nodes, edges } = setPaths(newApi.paths, direction, rfInstance);
       setNodes(nodes);
       setEdges(edges);

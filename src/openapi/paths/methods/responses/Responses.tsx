@@ -1,5 +1,5 @@
 import { ReactFlowInstance, Node } from '@xyflow/react';
-import { createRandomResponse } from './response/Response';
+import { createRandomResponse } from './code/ResponseCode';
 
 export interface ResponsesNodeProps {
   nodeId: string;
@@ -58,7 +58,7 @@ export function createResponseNodes(
       rfInstance,
       isHidden
     )
-  );
+  ).flat(); // Flatten the array since createRandomResponse returns Node[]
 
   return [responsesNode, ...childNodes];
 }
