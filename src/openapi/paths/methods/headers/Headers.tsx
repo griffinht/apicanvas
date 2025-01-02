@@ -6,7 +6,6 @@ export interface HeaderNodeProps {
   value: string;
   required: boolean;
   description: string;
-  nodeId: string;
   rfInstance: ReactFlowInstance;
 }
 
@@ -55,7 +54,7 @@ export function HeaderNode({ name, value, required, description }: HeaderNodePro
   );
 }
 
-export function HeadersNode({ nodeId }: { nodeId: string }) {
+export function HeadersNode() {
   return (
     <div style={{
       display: 'flex',
@@ -86,7 +85,6 @@ export function createHeaderNode(
         value={value}
         required={required}
         description={description}
-        nodeId={nodeId}
         rfInstance={rfInstance}
       />
     },
@@ -106,7 +104,7 @@ export function createHeaderNodes(
   const headersNode: Node = {
     id: baseNodeId,
     data: {
-      label: <HeadersNode nodeId={baseNodeId} />
+      label: <HeadersNode />
     },
     type: 'default',
     position: { x: 0, y: 0 },

@@ -1,4 +1,4 @@
-import { ReactFlowInstance, Node, Edge } from '@xyflow/react';
+import { ReactFlowInstance, Node } from '@xyflow/react';
 import { deleteMethodNode } from './Delete';
 import { editMethod } from './Edit';
 import { createHeaderNodes } from './headers/Headers';

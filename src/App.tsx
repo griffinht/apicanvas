@@ -74,7 +74,9 @@ export default function App() {
       setEdges(edges);
     } catch (error) {
       console.error('Error setting API:', error);
-      console.error('Stack trace:', error.stack);
+      if (error instanceof Error) {
+        console.error('Stack trace:', error.stack);
+      }
       throw error;
     }
   };

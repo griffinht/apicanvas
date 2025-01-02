@@ -6,7 +6,6 @@ export interface ParameterNodeProps {
   type: string;
   required: boolean;
   description: string;
-  nodeId: string;
   rfInstance: ReactFlowInstance;
 }
 
@@ -72,7 +71,6 @@ export function createParameterNode(
         type={type}
         required={required}
         description={description}
-        nodeId={nodeId}
         rfInstance={rfInstance}
       />
     },
@@ -83,7 +81,7 @@ export function createParameterNode(
   };
 }
 
-export function ParametersNode({ nodeId }: { nodeId: string }) {
+export function ParametersNode() {
   return (
     <div style={{
       display: 'flex',
@@ -106,7 +104,7 @@ export function createParameterNodes(
   const parametersNode: Node = {
     id: baseNodeId,
     data: {
-      label: <ParametersNode nodeId={baseNodeId} />
+      label: <ParametersNode />
     },
     type: 'default',
     position: { x: 0, y: 0 },

@@ -2,7 +2,6 @@ import { ReactFlowInstance, Node } from '@xyflow/react';
 import { createRandomResponse } from './code/ResponseCode';
 
 export interface ResponsesNodeProps {
-  nodeId: string;
   rfInstance: ReactFlowInstance;
 }
 
@@ -16,7 +15,7 @@ export function getResponsesNodeStyle() {
   };
 }
 
-export function ResponsesNode({ nodeId }: ResponsesNodeProps) {
+export function ResponsesNode() {
   return (
     <div style={{
       display: 'flex',
@@ -39,10 +38,7 @@ export function createResponseNodes(
   const responsesNode: Node = {
     id: baseNodeId,
     data: {
-      label: <ResponsesNode 
-        nodeId={baseNodeId}
-        rfInstance={rfInstance}
-      />
+      label: <ResponsesNode />
     },
     type: 'default',
     position: { x: 0, y: 0 },
