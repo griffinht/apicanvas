@@ -63,14 +63,20 @@ export default function App() {
   // SHARE LINK DO THIS FIRST
 
   const setApi = (newApi: any) => {
-    setTitle(newApi.info.title);
-    setVersion(newApi.info.version);
-    if (!rfInstance) {
-      throw new Error('rfInstance is not set');
+    try {
+      setTitle(newApi.info.title);
+      setVersion(newApi.info.version);
+      if (!rfInstance) {
+        throw new Error('rfInstance is not set');
+      }
+      const { nodes, edges } = setPaths(newApi.paths, direction, rfInstance);
+      setNodes(nodes);
+      setEdges(edges);
+    } catch (error) {
+      console.error('Error setting API:', error);
+      console.error('Stack trace:', error.stack);
+      throw error;
     }
-    const { nodes, edges } = setPaths(newApi.paths, direction, rfInstance);
-    setNodes(nodes);
-    setEdges(edges);
   };
 
   return (
