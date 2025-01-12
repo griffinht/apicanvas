@@ -13,12 +13,11 @@ import {
   ConnectionLineType,
 } from '@xyflow/react';
 
+import { CustomEditor } from './CustomEditor.tsx';
+
 import '@xyflow/react/dist/style.css';
 
 import { useState, useCallback, useEffect } from 'react';
-import { LoadApiDialog} from './menu/LoadApiDialog';
-import { showApiDialogSave as downloadApi } from './menu/SaveApiDialog';
-import { showApiPreviewDialog } from './menu/PreviewDialog';
 import { initialNodes, nodeTypes } from './nodes';
 import { edgeTypes, initialEdges } from '.';
 import { ApiInfoBar } from './ApiInfoBar';
@@ -32,6 +31,22 @@ export default function App() {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
   const [direction, setDirection] = useState<'TB' | 'LR'>('TB');
+  const [autoLoad, setAutoLoad] = useState(() => 
+    localStorage.getItem('autoLoad') === 'true'
+  );
+  const [autoSave, setAutoSave] = useState(() => 
+    localStorage.getItem('autoSave') === 'true'
+  );
+  const [lastSaveTime, setLastSaveTime] = useState(0);
+  const SAVE_DELAY = 1000; // 1 second in milliseconds
+
+  useEffect(() => {
+    localStorage.setItem('autoLoad', autoLoad.toString());
+  }, [autoLoad]);
+
+  useEffect(() => {
+    localStorage.setItem('autoSave', autoSave.toString());
+  }, [autoSave]);
 
   useEffect(() => {
     if (!rfInstance) {
@@ -60,15 +75,31 @@ export default function App() {
   };
 
 
-  // SHARE LINK DO THIS FIRST
-
   const setApi = (newApi: any) => {
     try {
       if (!rfInstance) {
         throw new Error('rfInstance is not set');
       }
+      if (!newApi.openapi) {
+        throw new Error('missing openapi version');
+      }
+      if (newApi.openapi !== '3.0.0') {
+        throw new Error('unsupported openapi version ' + newApi.openapi + ', only 3.0.0 is supported');
+      }
+      if (!newApi.info) {
+        throw new Error('missing info');
+      }
+      if (!newApi.info.title) {
+        throw new Error('missing info.title');
+      }
       setTitle(newApi.info.title);
+      if (!newApi.info.version) {
+        throw new Error('missing info.version');
+      }
       setVersion(newApi.info.version);
+      if (!newApi.paths) {
+        throw new Error('missing paths');
+      }
       const { nodes, edges } = setPaths(newApi.paths, direction, rfInstance);
       setNodes(nodes);
       setEdges(edges);
@@ -81,50 +112,120 @@ export default function App() {
     }
   };
 
+  const saveToEditor = () => {
+    const api = getApi();
+    (window as any).editor?.setValue(JSON.stringify(api, null, 4));
+    console.log('Saved API to editor');
+  };
+
+  useEffect(() => {
+    if (!autoSave || !rfInstance) return;
+    
+    const now = Date.now();
+    if (now - lastSaveTime < SAVE_DELAY) return;
+    
+    saveToEditor();
+    setLastSaveTime(now);
+  }, [nodes, edges, title, version]);
+
+  const loadFromEditor = () => {
+    const value = (window as any).editor?.getValue();
+    if (!value) return;
+    try {
+      const parsedApi = JSON.parse(value);
+      setApi(parsedApi);
+      console.log('Loaded API from editor');
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
+    }
+  };
+
   return (
     <ReactFlowProvider>
-      <ApiInfoBar title={title} setTitle={setTitle} version={version} setVersion={setVersion} />
-      <ReactFlow
-        nodes={nodes}
-        nodeTypes={nodeTypes}
-        onNodesChange={onNodesChange}
-        edges={edges}
-        edgeTypes={edgeTypes}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        onInit={setRfInstance}
-        connectionLineType={ConnectionLineType.SmoothStep}
-        fitView
-      >
-        <Background />
-        <MiniMap />
-        <Controls />
-        <Panel position="top-left">
-          <LoadApiDialog setApi={setApi} />
-          <button onClick={() => downloadApi(getApi())}>save</button>
-          <button onClick={() => showApiPreviewDialog(getApi())}>preview</button>
-          <button onClick={() => setDirection('TB')}>vertical layout</button>
-          <button onClick={() => setDirection('LR')}>horizontal layout</button>
-          <button onClick={() => {
-            const api = getApi();
-            setApi({
-              openapi: "bruh",
-              info: { title: "bruh", version: "bruh" },
-              paths: {
-                "/bruh": {
-                  get: {
-                    summary: "bruh"
-                  }
-                }
+      <div style={{ display: 'flex', width: '100vw', height: '100vh' }}>
+        <div style={{ flex: '1', height: '100%' }}>
+          <CustomEditor 
+            onMount={(editor) => {
+              (window as any).editor = editor;
+            }}
+            onChange={(value) => {
+              if (!value) return;
+              if (!autoLoad) return;
+              try {
+                setApi(JSON.parse(value));
+              } catch (error) {
+                console.error('Error parsing JSON:', error);
               }
-            });
-            setTimeout(() => {
-              setApi(api);
-            }, 1000);
-          }}>cycle (save then load)</button>
-          <button onClick={() => { if (!rfInstance) throw new Error('rfInstance is not set'); console.log(getPaths(rfInstance))}}>get paths</button>
-        </Panel>
-      </ReactFlow>
+            }}
+          />
+        </div>
+        <div style={{ flex: '1', height: '100%' }}>
+          <ApiInfoBar title={title} setTitle={setTitle} version={version} setVersion={setVersion} />
+          <ReactFlow
+            nodes={nodes}
+            nodeTypes={nodeTypes}
+            onNodesChange={onNodesChange}
+            edges={edges}
+            edgeTypes={edgeTypes}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onInit={setRfInstance}
+            connectionLineType={ConnectionLineType.SmoothStep}
+            fitView
+          >
+            <Background />
+            <MiniMap />
+            <Controls />
+            <Panel position="top-left">
+              <button onClick={() => {
+                if (window.confirm('This will overwrite the contents of your editor. Are you sure?')) {
+                  saveToEditor();
+                }
+              }}>save</button>
+              <button onClick={loadFromEditor}>load</button>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={autoLoad}
+                  onChange={(e) => {
+                    setAutoLoad(e.target.checked);
+                    if (e.target.checked) {
+                      loadFromEditor();
+                    }
+                  }}
+                /> Auto-load
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={autoSave}
+                  onChange={(e) => setAutoSave(e.target.checked)}
+                /> Auto-save
+              </label>
+              <button onClick={() => setDirection('TB')}>vertical layout</button>
+              <button onClick={() => setDirection('LR')}>horizontal layout</button>
+              <button onClick={() => {
+                const api = getApi();
+                setApi({
+                  openapi: "bruh",
+                  info: { title: "bruh", version: "bruh" },
+                  paths: {
+                    "/bruh": {
+                      get: {
+                        summary: "bruh"
+                      }
+                    }
+                  }
+                });
+                setTimeout(() => {
+                  setApi(api);
+                }, 1000);
+              }}>cycle (save then load)</button>
+              <button onClick={() => { if (!rfInstance) throw new Error('rfInstance is not set'); console.log(getPaths(rfInstance))}}>get paths</button>
+            </Panel>
+          </ReactFlow>
+        </div>
+      </div>
     </ReactFlowProvider>
   );
 }
