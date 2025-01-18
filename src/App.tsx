@@ -30,7 +30,9 @@ export default function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
-  const [direction, setDirection] = useState<'TB' | 'LR'>('TB');
+  const [direction, setDirection] = useState<'TB' | 'LR'>(() => 
+    (localStorage.getItem('direction') as 'TB' | 'LR') || 'TB'
+  );
   const [autoLoad, setAutoLoad] = useState(() => 
     localStorage.getItem('autoLoad') === 'true'
   );
@@ -56,6 +58,10 @@ export default function App() {
     const { nodes: layoutedNodes, edges: layoutedEdges } = setPaths(getPaths(rfInstance), direction, rfInstance);
     setNodes([...layoutedNodes]);
     setEdges([...layoutedEdges]);
+  }, [direction]);
+
+  useEffect(() => {
+    localStorage.setItem('direction', direction);
   }, [direction]);
 
   const onConnect: OnConnect = useCallback(
