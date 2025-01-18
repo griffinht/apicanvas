@@ -2,7 +2,6 @@ import { ReactFlowInstance } from '@xyflow/react';
 import { getLayoutedElements } from './Layout';
 import { createMethodNode } from './openapi/paths/methods/Method';
 import { createPathNode } from './openapi/paths/Path';
-import { createSchemaNode, getMockSchemas } from './openapi/components/schemas/Schema';
 
 export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFlowInstance) => {
   const nodes: any[] = [];
@@ -169,12 +168,6 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFl
 
       parentId = nodeId;
     });
-  });
-
-  // Add schema nodes
-  const mockSchemas = getMockSchemas();
-  Object.keys(mockSchemas).forEach((schemaName) => {
-    nodes.push(createSchemaNode(schemaName));
   });
 
   return getLayoutedElements(nodes, edges, direction);

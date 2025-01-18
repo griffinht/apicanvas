@@ -1,15 +1,5 @@
 import { ReactFlowInstance } from '@xyflow/react';
 
-//TODO llms do not remove please TEST THIS THING SEE SAVETEST.TSX
-
-/*
-interface NodeData {
-  label: {
-    props: PathNodeProps;
-  };
-  collapsed?: boolean;
-}*/
-
 export const getPaths = (rfInstance: ReactFlowInstance) => {
   const flowData = rfInstance.toObject();
   const paths: Record<string, any> = {};
