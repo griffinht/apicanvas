@@ -2,6 +2,7 @@ import { ReactFlowInstance, Node, Edge } from '@xyflow/react';
 import { deleteMethodNode } from './Delete';
 import { editMethod } from './Edit';
 import { createRandomResponse } from './response/Response';
+import { getLayoutedElements } from '../../../Layout';
 
 export interface MethodNodeProps {
   method: string;
@@ -95,7 +96,7 @@ export function MethodNode({ method, nodeId, rfInstance, direction }: MethodNode
     <div style={{
       display: 'flex',
       alignItems: 'center',
-      gap: '8px',
+      position: 'relative',
       width: '100%',
       height: '100%',
     }}>
@@ -115,17 +116,63 @@ export function MethodNode({ method, nodeId, rfInstance, direction }: MethodNode
         <option value="DELETE">DELETE</option>
         <option value="PATCH">PATCH</option>
       </select>
-      <button 
-        onClick={() => deleteMethodNode(nodeId, rfInstance, direction)}
-        style={{
-          backgroundColor: 'transparent',
-          border: 'none',
-          color: method.toUpperCase() === 'POST' ? 'black' : 'white',
-          cursor: 'pointer'
-        }}
+
+      <div style={{
+        backgroundColor: '#fff',
+        padding: '4px 8px',
+        borderRadius: '4px',
+        border: '1px solid #ddd',
+        display: 'flex',
+        gap: '4px',
+        opacity: 0,
+        transition: 'opacity 0.2s ease',
+        position: 'absolute',
+        left: '100%',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        marginLeft: '8px',
+        zIndex: 10,
+      }}
+      onMouseEnter={e => e.currentTarget.style.opacity = '1'}
+      onMouseLeave={e => e.currentTarget.style.opacity = '0'}
       >
-        X
-      </button>
+        <button 
+          onClick={() => {
+            const { nodes, edges } = createRandomResponse(
+              `${nodeId}-response-${Date.now()}`,
+              rfInstance,
+              false
+            );
+            const allNodes = [...rfInstance.getNodes(), ...nodes];
+            const allEdges = [
+              ...rfInstance.getEdges(),
+              ...edges,
+              {
+                id: `${nodeId}-to-${nodes[0].id}`,
+                source: nodeId,
+                target: nodes[0].id,
+                type: 'smoothstep',
+              }
+            ];
+            const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+              allNodes,
+              allEdges,
+              direction
+            );
+            rfInstance.setNodes(layoutedNodes);
+            rfInstance.setEdges(layoutedEdges);
+          }}
+          style={{ fontSize: '0.9em' }}
+        >
+          + response
+        </button>
+        <button 
+          onClick={() => deleteMethodNode(nodeId, rfInstance, direction)}
+          style={{ fontSize: '0.9em' }}
+        >
+          X
+        </button>
+      </div>
     </div>
   );
 } 
