@@ -12,14 +12,26 @@ export function changeTitle(nodeId: string, rfInstance: ReactFlowInstance, direc
   if (!node) return;
   
   // Extract current segment from node data
-  const currentSegment = node.data?.label?.props?.segment;
+  const currentSegment = (node.data?.label as { props: { segment: string } })?.props?.segment;
   const newSegment = prompt('Enter new path segment:', currentSegment);
   if (!newSegment || newSegment === currentSegment) return;
 
-  // Update the node's style and data using createPathNode
+  // Update the node's style and data
   rfInstance.setNodes(nodes.map(n => {
     if (n.id === nodeId) {
-      return createPathNode(newSegment, nodeId, rfInstance, direction, n.hidden || false);
+      return {
+        ...n,
+        data: { 
+          ...n.data,
+          label: <PathNode 
+            segment={newSegment} 
+            nodeId={nodeId} 
+            rfInstance={rfInstance} 
+            direction={direction} 
+          />
+        },
+        style: getPathNodeStyle(newSegment)
+      };
     }
     return n;
   }));
