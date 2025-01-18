@@ -6,6 +6,37 @@ import { deletePathNode } from './Delete';
 import { collapsePathNode } from './Collapse';
 import { ReactFlowInstance, Node } from '@xyflow/react';
 
+export function changeTitle(nodeId: string, rfInstance: ReactFlowInstance, direction: 'TB' | 'LR') {
+  const nodes = rfInstance.getNodes();
+  const node = nodes.find(n => n.id === nodeId);
+  if (!node) return;
+  
+  // Extract current segment from node data
+  const currentSegment = node.data?.label?.props?.segment;
+  const newSegment = prompt('Enter new path segment:', currentSegment);
+  if (!newSegment || newSegment === currentSegment) return;
+
+  // Update the node's style and data
+  rfInstance.setNodes(nodes.map(n => {
+    if (n.id === nodeId) {
+      return {
+        ...n,
+        data: {
+          ...n.data,
+          label: <PathNode 
+            segment={newSegment} 
+            nodeId={nodeId} 
+            rfInstance={rfInstance} 
+            direction={direction}
+          />
+        },
+        style: getPathNodeStyle(newSegment)
+      };
+    }
+    return n;
+  }));
+}
+
 export interface PathNodeProps {
   segment: string;
   nodeId: string;
@@ -99,6 +130,12 @@ export function PathNode({ segment, nodeId, rfInstance, direction }: PathNodePro
       onMouseEnter={e => e.currentTarget.style.opacity = '1'}
       onMouseLeave={e => e.currentTarget.style.opacity = '0'}
       >
+        <button 
+          onClick={() => changeTitle(nodeId, rfInstance, direction)}
+          style={{ fontSize: '0.9em' }}
+        >
+          change title
+        </button>
         <button 
           onClick={() => addMethodNode(nodeId, rfInstance, direction)}
           style={{ fontSize: '0.9em' }}
