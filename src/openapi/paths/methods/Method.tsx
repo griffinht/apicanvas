@@ -1,9 +1,7 @@
-import { ReactFlowInstance, Node } from '@xyflow/react';
+import { ReactFlowInstance, Node, Edge } from '@xyflow/react';
 import { deleteMethodNode } from './Delete';
 import { editMethod } from './Edit';
-import { createHeaderNodes } from './headers/Headers';
-import { createParameterNodes } from './parameters/Parameters';
-import { createResponseNodes } from './responses/Responses';
+import { createRandomResponse } from './responsecode/ResponseCode';
 
 export interface MethodNodeProps {
   method: string;
@@ -42,7 +40,7 @@ export function createMethodNode(
   direction: 'TB' | 'LR',
   isHidden: boolean,
   parentId?: string
-): Node[] {
+): { nodes: Node[], edges: Edge[] } {
   const methodNode = {
     id: nodeId,
     data: { 
@@ -61,25 +59,37 @@ export function createMethodNode(
     style: getMethodNodeStyle(method)
   };
 
-  const headerNodes = createHeaderNodes(
-    `${nodeId}-header`,
-    rfInstance,
-    isHidden
+  // Create 1-3 response code nodes
+  const responseCount = Math.floor(Math.random() * 3) + 1;
+  const responses = Array.from({ length: responseCount }, (_, i) => 
+    createRandomResponse(
+      `${nodeId}-response-${i + 1}`,
+      rfInstance,
+      isHidden
+    )
   );
 
-  const parameterNodes = createParameterNodes(
-    `${nodeId}-param`,
-    rfInstance,
-    isHidden
-  );
+  const allNodes = [methodNode];
+  const allEdges: Edge[] = [];
 
-  const responseNodes = createResponseNodes(
-    `${nodeId}-response`,
-    rfInstance,
-    isHidden
-  );
+  // Add all response nodes and their edges
+  responses.forEach(response => {
+    allNodes.push(...response.nodes);
+    allEdges.push(...response.edges);
+    
+    // Add edge from method to response (first node is always the response node)
+    allEdges.push({
+      id: `${nodeId}-to-${response.nodes[0].id}`,
+      source: nodeId,
+      target: response.nodes[0].id,
+      type: 'smoothstep',
+    });
+  });
 
-  return [methodNode, ...headerNodes, ...parameterNodes, ...responseNodes];
+  return {
+    nodes: allNodes,
+    edges: allEdges
+  };
 }
 
 export function MethodNode({ method, nodeId, rfInstance, direction }: MethodNodeProps) {

@@ -1,4 +1,4 @@
-import { ReactFlowInstance, Node } from '@xyflow/react';
+import { ReactFlowInstance, Node, Edge } from '@xyflow/react';
 import { createResponseValueNode } from './value/ResponseValue';
 
 export interface ResponseNodeProps {
@@ -89,7 +89,7 @@ export function createResponseNode(
   nodeId: string,
   rfInstance: ReactFlowInstance,
   isHidden: boolean = false
-): Node[] {
+): { nodes: Node[], edges: Edge[] } {
   const responseNode = {
     id: nodeId,
     data: {
@@ -117,14 +117,24 @@ export function createResponseNode(
     )
   ] : [];
 
-  return [responseNode, ...valueNodes];
+  const edges = valueNodes.map(valueNode => ({
+    id: `${nodeId}-to-${valueNode.id}`,
+    source: nodeId,
+    target: valueNode.id,
+    type: 'smoothstep',
+  }));
+
+  return {
+    nodes: [responseNode, ...valueNodes],
+    edges
+  };
 }
 
 export function createRandomResponse(
   nodeId: string,
   rfInstance: ReactFlowInstance,
   isHidden: boolean = false
-): Node[] {
+): { nodes: Node[], edges: Edge[] } {
   const statusCodes = ['200', '201', '400', '401', '403', '404', '500'];
   const statusCode = statusCodes[Math.floor(Math.random() * statusCodes.length)];
   const descriptions = {
@@ -137,32 +147,11 @@ export function createRandomResponse(
     '500': 'Internal Server Error'
   };
 
-  const responseNode = {
-    id: nodeId,
-    data: {
-      label: <ResponseNode
-        statusCode={statusCode}
-        description={descriptions[statusCode as keyof typeof descriptions]}
-        nodeId={nodeId}
-        rfInstance={rfInstance}
-      />,
-      statusCode
-    },
-    type: 'default',
-    position: { x: 0, y: 0 },
-    hidden: isHidden,
-    style: getResponseNodeStyle(statusCode)
-  };
-
-  const valueNodes = Math.random() > 0.5 ? [
-    createResponseValueNode(
-      'application/json',
-      generateRandomSchema(), // Generate a new random schema for each response
-      `${nodeId}-value`,
-      rfInstance,
-      isHidden
-    )
-  ] : [];
-
-  return [responseNode, ...valueNodes];
+  return createResponseNode(
+    statusCode,
+    descriptions[statusCode as keyof typeof descriptions],
+    nodeId,
+    rfInstance,
+    isHidden
+  );
 }
