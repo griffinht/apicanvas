@@ -1,7 +1,7 @@
 import { ReactFlowInstance, Node, Edge } from '@xyflow/react';
 import { deleteMethodNode } from './Delete';
 import { editMethod } from './Edit';
-import { createRandomResponse } from './responsecode/ResponseCode';
+import { createRandomResponse } from './response/Response';
 
 export interface MethodNodeProps {
   method: string;
@@ -69,15 +69,13 @@ export function createMethodNode(
     )
   );
 
-  const allNodes = [methodNode];
+  const allNodes: Node[] = [methodNode];
   const allEdges: Edge[] = [];
 
-  // Add all response nodes and their edges
   responses.forEach(response => {
     allNodes.push(...response.nodes);
     allEdges.push(...response.edges);
-    
-    // Add edge from method to response (first node is always the response node)
+    // Add edge from method to response
     allEdges.push({
       id: `${nodeId}-to-${response.nodes[0].id}`,
       source: nodeId,
