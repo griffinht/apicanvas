@@ -9,7 +9,8 @@ export function editResponseCode(nodeId: string, rfInstance: ReactFlowInstance) 
   
   // Extract current status code from node data
   const currentCode = node.data?.statusCode;
-  const newCode = prompt('Enter new status code:', currentCode);
+  const newCodeInput = prompt('Enter new status code:', currentCode?.toString());
+  const newCode = newCodeInput?.toString();
   
   // Validate input is a valid status code
   if (!newCode || newCode === currentCode || !/^[1-5][0-9][0-9]$/.test(newCode)) {
@@ -41,8 +42,8 @@ export function editResponseCode(nodeId: string, rfInstance: ReactFlowInstance) 
             description={description}
             nodeId={nodeId}
             rfInstance={rfInstance}
-            schema={n.data.schema}
-            contentType={n.data.contentType}
+            schema={n.data.schema as string | undefined}
+            contentType={n.data.contentType as string | undefined}
           />
         },
         style: getResponseNodeStyle(newCode)

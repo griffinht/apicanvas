@@ -1,6 +1,18 @@
 import { ReactFlowInstance, Node, Edge } from '@xyflow/react';
 import { useState } from 'react';
-import { editResponseCode } from './Edit';
+
+const mockDescriptions = [
+  "Successfully fetched user data",
+  "New pet added to the store",
+  "Invalid API key provided",
+  "User profile updated successfully",
+  "Failed to process payment",
+  "Resource has been archived",
+  "Rate limit exceeded",
+  "Database connection timeout",
+  "Successfully deleted the thing",
+  "Cache invalidated successfully"
+];
 
 export interface ResponseNodeProps {
   statusCode: string;
@@ -9,6 +21,44 @@ export interface ResponseNodeProps {
   rfInstance: ReactFlowInstance;
   schema?: any;
   contentType?: string;
+}
+
+export function editResponseCode(nodeId: string, rfInstance: ReactFlowInstance) {
+  const nodes = rfInstance.getNodes();
+  const node = nodes.find(n => n.id === nodeId);
+  if (!node) return;
+  
+  const currentCode = node.data?.statusCode as string;
+  const newCode = prompt('Enter new status code:', currentCode);
+  
+  if (!newCode || newCode === currentCode || !/^[1-5][0-9][0-9]$/.test(newCode)) {
+    return;
+  }
+
+  // Grab a random mock description
+  const description = mockDescriptions[Math.floor(Math.random() * mockDescriptions.length)];
+
+  rfInstance.setNodes(nodes.map(n => {
+    if (n.id === nodeId) {
+      return {
+        ...n,
+        data: {
+          ...n.data,
+          statusCode: newCode,
+          label: <ResponseNode
+            statusCode={newCode}
+            description={description}
+            nodeId={nodeId}
+            rfInstance={rfInstance}
+            schema={n.data.schema as any}
+            contentType={n.data.contentType as string}
+          />
+        },
+        style: getResponseNodeStyle(newCode)
+      };
+    }
+    return n;
+  }));
 }
 
 export function getResponseNodeStyle(statusCode: string) {
@@ -260,19 +310,11 @@ export function createRandomResponse(
 ): { nodes: Node[], edges: Edge[] } {
   const statusCodes = ['200', '201', '400', '401', '403', '404', '500'];
   const statusCode = statusCodes[Math.floor(Math.random() * statusCodes.length)];
-  const descriptions = {
-    '200': 'OK',
-    '201': 'Created',
-    '400': 'Bad Request',
-    '401': 'Unauthorized',
-    '403': 'Forbidden',
-    '404': 'Not Found',
-    '500': 'Internal Server Error'
-  };
+  const description = mockDescriptions[Math.floor(Math.random() * mockDescriptions.length)];
 
   return createResponseNode(
     statusCode,
-    descriptions[statusCode as keyof typeof descriptions],
+    description,
     nodeId,
     rfInstance,
     isHidden
