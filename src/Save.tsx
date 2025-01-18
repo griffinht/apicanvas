@@ -45,12 +45,35 @@ export const getPaths = (rfInstance: ReactFlowInstance) => {
     // Add the method to the path
     paths[fullPath][method] = {
       summary: `${method} ${fullPath}`,
-      responses: {
-        '200': {
-          description: 'Successful operation'
-        }
-      }
+      responses: {}
     };
+
+    // Find all response nodes connected to this method node
+    const responseEdges = flowData.edges.filter(edge => edge.source === methodNode.id);
+    responseEdges.forEach(edge => {
+      const responseNode = flowData.nodes.find(n => n.id === edge.target);
+      if (!responseNode) return;
+
+      // @ts-ignore
+      const statusCode = responseNode.data.statusCode;
+      // @ts-ignore
+      const description = responseNode.data.label.props.description;
+      // @ts-ignore
+      const schema = responseNode.data.label.props.schema;
+      // @ts-ignore
+      const contentType = responseNode.data.label.props.contentType;
+
+      paths[fullPath][method].responses[statusCode] = {
+        description: description,
+        ...(schema && contentType && {
+          content: {
+            [contentType]: {
+              schema: schema
+            }
+          }
+        })
+      };
+    });
 
     // Check if any segments in this path are collapsed
     pathSegments.reduce((currentPath, segment) => {

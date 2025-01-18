@@ -1,7 +1,7 @@
 import { ReactFlowInstance, Node, Edge } from '@xyflow/react';
 import { deleteMethodNode } from './Delete';
 import { editMethod } from './Edit';
-import { createRandomResponse } from './response/Response';
+import { createResponseNode } from './response/Response';
 import { getLayoutedElements } from '../../../Layout';
 
 export interface MethodNodeProps {
@@ -60,34 +60,9 @@ export function createMethodNode(
     style: getMethodNodeStyle(method)
   };
 
-  // Create 1-3 response code nodes
-  const responseCount = Math.floor(Math.random() * 3) + 1;
-  const responses = Array.from({ length: responseCount }, (_, i) => 
-    createRandomResponse(
-      `${nodeId}-response-${i + 1}`,
-      rfInstance,
-      isHidden
-    )
-  );
-
-  const allNodes: Node[] = [methodNode];
-  const allEdges: Edge[] = [];
-
-  responses.forEach(response => {
-    allNodes.push(...response.nodes);
-    allEdges.push(...response.edges);
-    // Add edge from method to response
-    allEdges.push({
-      id: `${nodeId}-to-${response.nodes[0].id}`,
-      source: nodeId,
-      target: response.nodes[0].id,
-      type: 'smoothstep',
-    });
-  });
-
   return {
-    nodes: allNodes,
-    edges: allEdges
+    nodes: [methodNode],
+    edges: []
   };
 }
 
@@ -138,11 +113,15 @@ export function MethodNode({ method, nodeId, rfInstance, direction }: MethodNode
       >
         <button 
           onClick={() => {
-            const { nodes, edges } = createRandomResponse(
-              `${nodeId}-response-${Date.now()}`,
+            const responseNodeId = `${nodeId}-response-${Date.now()}`;
+            const { nodes, edges } = createResponseNode(
+              '200',  // Default status code
+              'OK',   // Default description
+              responseNodeId,
               rfInstance,
               false
             );
+            
             const allNodes = [...rfInstance.getNodes(), ...nodes];
             const allEdges = [
               ...rfInstance.getEdges(),
@@ -154,6 +133,7 @@ export function MethodNode({ method, nodeId, rfInstance, direction }: MethodNode
                 type: 'smoothstep',
               }
             ];
+            
             const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
               allNodes,
               allEdges,

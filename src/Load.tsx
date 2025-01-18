@@ -2,6 +2,7 @@ import { ReactFlowInstance } from '@xyflow/react';
 import { getLayoutedElements } from './Layout';
 import { createMethodNode } from './openapi/paths/methods/Method';
 import { createPathNode } from './openapi/paths/Path';
+import { createResponseNode } from './openapi/paths/methods/response/Response';
 
 export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFlowInstance) => {
   const nodes: any[] = [];
@@ -63,7 +64,7 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFl
       // Add method nodes at the leaf level
       if (index === segments.length - 1) {
         // @ts-ignore
-        Object.entries(pathItem).forEach(([key, value]) => {
+        Object.entries(pathItem).forEach(([key, value]: [string, any]) => {
           if (['get', 'post', 'put', 'delete', 'patch'].includes(key)) {
             const methodNodeId = `${nodeId}-${key}`;
             const { nodes: methodNodes, edges: methodEdges } = createMethodNode(
@@ -85,6 +86,42 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFl
               animated: true,
               hidden: isChildOfCollapsed || isCollapsed
             });
+
+            // Add response nodes for each status code
+            if (value.responses) {
+              Object.entries(value.responses).forEach(([statusCode, response]: [string, any]) => {
+                const responseNodeId = `${methodNodeId}-${statusCode}`;
+                const { nodes: responseNodes, edges: responseEdges } = createResponseNode(
+                  statusCode,
+                  response.description,
+                  responseNodeId,
+                  rfInstance,
+                  isChildOfCollapsed || isCollapsed,
+                  response.content ? Object.values(response.content)[0].schema : undefined,
+                  response.content ? Object.keys(response.content)[0] : undefined
+                );
+
+                nodes.push(...responseNodes);
+                edges.push({
+                  id: `e-${methodNodeId}-${responseNodeId}`,
+                  source: methodNodeId,
+                  target: responseNodeId,
+                  type: 'smoothstep',
+                  animated: true,
+                  hidden: isChildOfCollapsed || isCollapsed
+                });
+
+                // Add schema and content type if present
+                if (response.content) {
+                  const [contentType, content] = Object.entries(response.content)[0];
+                  responseNodes[0].data = {
+                    ...responseNodes[0].data,
+                    schema: content.schema,
+                    contentType
+                  };
+                }
+              });
+            }
 
             // Add the method edges
             edges.push(...methodEdges);

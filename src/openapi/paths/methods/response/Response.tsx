@@ -1,19 +1,6 @@
 import { ReactFlowInstance, Node, Edge } from '@xyflow/react';
 import { useState } from 'react';
 
-const mockDescriptions = [
-  "Successfully fetched user data",
-  "New pet added to the store",
-  "Invalid API key provided",
-  "User profile updated successfully",
-  "Failed to process payment",
-  "Resource has been archived",
-  "Rate limit exceeded",
-  "Database connection timeout",
-  "Successfully deleted the thing",
-  "Cache invalidated successfully"
-];
-
 export interface ResponseNodeProps {
   statusCode: string;
   description: string;
@@ -35,11 +22,10 @@ export function editResponseCode(nodeId: string, rfInstance: ReactFlowInstance) 
     return;
   }
 
-  // Grab a random mock description
-  const description = mockDescriptions[Math.floor(Math.random() * mockDescriptions.length)];
-
   rfInstance.setNodes(nodes.map(n => {
     if (n.id === nodeId) {
+      const existingDescription = n.data.label.props.description;
+      
       return {
         ...n,
         data: {
@@ -47,11 +33,11 @@ export function editResponseCode(nodeId: string, rfInstance: ReactFlowInstance) 
           statusCode: newCode,
           label: <ResponseNode
             statusCode={newCode}
-            description={description}
+            description={existingDescription}
             nodeId={nodeId}
             rfInstance={rfInstance}
-            schema={n.data.schema as any}
-            contentType={n.data.contentType as string}
+            schema={n.data.schema}
+            contentType={n.data.contentType}
           />
         },
         style: getResponseNodeStyle(newCode)
@@ -237,47 +223,15 @@ export function ResponseNode({ statusCode, description, schema, contentType, nod
   );
 }
 
-function generateRandomSchema() {
-  const schemas = [
-    // Direct Pet reference
-    {
-      $ref: '#/components/schemas/Pet'
-    },
-    // Array of Pets
-    {
-      type: 'array',
-      items: {
-        $ref: '#/components/schemas/Pet'
-      }
-    },
-    // Error object
-    {
-      type: 'object',
-      properties: {
-        code: { type: 'integer' },
-        message: { type: 'string' }
-      }
-    },
-    // Simple string
-    {
-      type: 'string',
-      format: 'date-time'
-    }
-  ];
-
-  return schemas[Math.floor(Math.random() * schemas.length)];
-}
-
 export function createResponseNode(
   statusCode: string,
   description: string,
   nodeId: string,
   rfInstance: ReactFlowInstance,
-  isHidden: boolean = false
+  isHidden: boolean = false,
+  schema?: any,
+  contentType?: string
 ): { nodes: Node[], edges: Edge[] } {
-  const schema = Math.random() > 0.5 ? generateRandomSchema() : undefined;
-  const contentType = schema ? 'application/json' : undefined;
-
   const responseNode = {
     id: nodeId,
     data: {
@@ -289,7 +243,9 @@ export function createResponseNode(
         schema={schema}
         contentType={contentType}
       />,
-      statusCode
+      statusCode,
+      schema,
+      contentType
     },
     type: 'default',
     position: { x: 0, y: 0 },
@@ -301,22 +257,4 @@ export function createResponseNode(
     nodes: [responseNode],
     edges: []
   };
-}
-
-export function createRandomResponse(
-  nodeId: string,
-  rfInstance: ReactFlowInstance,
-  isHidden: boolean = false
-): { nodes: Node[], edges: Edge[] } {
-  const statusCodes = ['200', '201', '400', '401', '403', '404', '500'];
-  const statusCode = statusCodes[Math.floor(Math.random() * statusCodes.length)];
-  const description = mockDescriptions[Math.floor(Math.random() * mockDescriptions.length)];
-
-  return createResponseNode(
-    statusCode,
-    description,
-    nodeId,
-    rfInstance,
-    isHidden
-  );
 }
