@@ -208,26 +208,9 @@ export default function App() {
                   onChange={(e) => setAutoSave(e.target.checked)}
                 /> Auto-save
               </label>
-              <button onClick={() => setDirection('TB')}>vertical layout</button>
-              <button onClick={() => setDirection('LR')}>horizontal layout</button>
-              <button onClick={() => {
-                const api = getApi();
-                setApi({
-                  openapi: "bruh",
-                  info: { title: "bruh", version: "bruh" },
-                  paths: {
-                    "/bruh": {
-                      get: {
-                        summary: "bruh"
-                      }
-                    }
-                  }
-                });
-                setTimeout(() => {
-                  setApi(api);
-                }, 1000);
-              }}>cycle (save then load)</button>
-              <button onClick={() => { if (!rfInstance) throw new Error('rfInstance is not set'); console.log(getPaths(rfInstance))}}>get paths</button>
+              <button onClick={() => setDirection(direction === 'TB' ? 'LR' : 'TB')}>
+                {direction === 'TB' ? 'horizontal' : 'vertical'} layout
+              </button>
             </Panel>
           </ReactFlow>
         </div>
