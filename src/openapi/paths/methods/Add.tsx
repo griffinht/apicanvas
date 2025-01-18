@@ -10,7 +10,7 @@ export function addMethodNode(parentId: string, rfInstance: ReactFlowInstance, d
   const methodNodeId = `${parentId}-method`;
   
   // Create method node and its associated nodes
-  const newNodes = createMethodNode('GET', methodNodeId, rfInstance, direction, false, parentId);
+  const { nodes: methodNodes, edges: methodEdges } = createMethodNode('GET', methodNodeId, rfInstance, direction, false, parentId);
 
   // Create edges to connect all nodes
   const newEdges: Edge[] = [
@@ -22,35 +22,12 @@ export function addMethodNode(parentId: string, rfInstance: ReactFlowInstance, d
       type: 'smoothstep',
       animated: true
     },
-    // Edge to header
-    {
-      id: `e-${methodNodeId}-header`,
-      source: methodNodeId,
-      target: `${methodNodeId}-header`,
-      type: 'smoothstep',
-      animated: true
-    },
-    // Edge to parameter
-    {
-      id: `e-${methodNodeId}-param`,
-      source: methodNodeId,
-      target: `${methodNodeId}-param`,
-      type: 'smoothstep',
-      animated: true
-    },
-    // Edge to response
-    {
-      id: `e-${methodNodeId}-response`,
-      source: methodNodeId,
-      target: `${methodNodeId}-response`,
-      type: 'smoothstep',
-      animated: true
-    }
+    ...methodEdges
   ];
 
   // Apply layout
   const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-    [...nodes, ...newNodes],
+    [...nodes, ...methodNodes],
     [...edges, ...newEdges],
     direction
   );
