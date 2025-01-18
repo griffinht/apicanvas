@@ -1,5 +1,5 @@
-import { Node, Edge, ReactFlowInstance } from '@xyflow/react';
-import { PathNode } from './Path';
+import { Edge, ReactFlowInstance } from '@xyflow/react';
+import { createPathNode } from './Path';
 import { getLayoutedElements } from '../../Layout';
 
 let nodeIdCounter = 1;
@@ -11,15 +11,8 @@ export function addPathNode(parentId: string | null, rfInstance: ReactFlowInstan
   // Generate unique ID for new node
   const newNodeId = `path-${nodeIdCounter++}`;
   
-  // Create new node
-  const newNode: Node = {
-    id: newNodeId,
-    type: 'default',
-    data: {
-      label: <PathNode segment="new-endpoint" nodeId={newNodeId} rfInstance={rfInstance} direction={direction} />
-    },
-    position: { x: 0, y: 0 } // Position will be set by layout
-  };
+  // Create new node using createPathNode helper
+  const newNode = createPathNode('new-endpoint', newNodeId, rfInstance, direction, false);
 
   // Create edge if there's a parent
   let newEdges: Edge[] = [...edges];

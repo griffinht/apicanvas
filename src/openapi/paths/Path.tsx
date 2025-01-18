@@ -16,22 +16,10 @@ export function changeTitle(nodeId: string, rfInstance: ReactFlowInstance, direc
   const newSegment = prompt('Enter new path segment:', currentSegment);
   if (!newSegment || newSegment === currentSegment) return;
 
-  // Update the node's style and data
+  // Update the node's style and data using createPathNode
   rfInstance.setNodes(nodes.map(n => {
     if (n.id === nodeId) {
-      return {
-        ...n,
-        data: {
-          ...n.data,
-          label: <PathNode 
-            segment={newSegment} 
-            nodeId={nodeId} 
-            rfInstance={rfInstance} 
-            direction={direction}
-          />
-        },
-        style: getPathNodeStyle(newSegment)
-      };
+      return createPathNode(newSegment, nodeId, rfInstance, direction, n.hidden || false);
     }
     return n;
   }));
