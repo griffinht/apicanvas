@@ -1,5 +1,6 @@
 import { ReactFlowInstance, Node, Edge } from '@xyflow/react';
 import { useState } from 'react';
+import { editResponseCode } from './Edit';
 
 export interface ResponseNodeProps {
   statusCode: string;
@@ -50,7 +51,7 @@ function parseSchema(obj: any): string {
   return 'unknown';
 }
 
-export function ResponseNode({ statusCode, description, schema, contentType }: ResponseNodeProps) {
+export function ResponseNode({ statusCode, description, schema, contentType, nodeId, rfInstance }: ResponseNodeProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -59,9 +60,7 @@ export function ResponseNode({ statusCode, description, schema, contentType }: R
       flexDirection: 'column',
       gap: '12px',
     }}>
-      {/* Status Code Section - Always visible */}
       <div 
-        onClick={() => setIsExpanded(!isExpanded)}
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -73,7 +72,11 @@ export function ResponseNode({ statusCode, description, schema, contentType }: R
         <div style={{
           transform: `rotate(${isExpanded ? '90deg' : '0deg'})`,
           transition: 'transform 0.2s',
-        }}>
+          display: 'flex',
+          alignItems: 'center',
+        }}
+        onClick={() => setIsExpanded(!isExpanded)}
+        >
           ▶
         </div>
         <div style={{
@@ -83,14 +86,47 @@ export function ResponseNode({ statusCode, description, schema, contentType }: R
           flex: 1,
         }}>
           <div style={{
-            fontWeight: 'bold',
-            color: '#2D3748',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            position: 'relative',
+            minHeight: '24px',
           }}>
-            {statusCode}
+            <span style={{
+              fontWeight: 'bold',
+              color: '#2D3748',
+            }}>
+              {statusCode}
+            </span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                editResponseCode(nodeId, rfInstance);
+              }}
+              style={{
+                border: 'none',
+                background: 'none',
+                cursor: 'pointer',
+                padding: '2px 4px',
+                fontSize: '0.9em',
+                opacity: 0.6,
+                transition: 'opacity 0.2s',
+                display: 'flex',
+                alignItems: 'center',
+                position: 'absolute',
+                right: '0',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = '0.6'}
+            >
+              ✏️
+            </button>
           </div>
           <div style={{
             fontSize: '0.9em',
             color: '#4A5568',
+            textAlign: 'center',
           }}>
             {description}
           </div>
