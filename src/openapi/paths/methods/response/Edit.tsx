@@ -51,4 +51,37 @@ export function editResponseCode(nodeId: string, rfInstance: ReactFlowInstance) 
     }
     return n;
   }));
+}
+
+export function editResponseDescription(nodeId: string, rfInstance: ReactFlowInstance) {
+  const nodes = rfInstance.getNodes();
+  const node = nodes.find(n => n.id === nodeId);
+  if (!node) return;
+  
+  const currentDescription = node.data.label.props.description;
+  const newDescription = prompt('Enter new description:', currentDescription);
+  
+  if (!newDescription || newDescription === currentDescription) {
+    return;
+  }
+
+  rfInstance.setNodes(nodes.map(n => {
+    if (n.id === nodeId) {
+      return {
+        ...n,
+        data: {
+          ...n.data,
+          label: <ResponseNode
+            statusCode={n.data.statusCode}
+            description={newDescription}
+            nodeId={nodeId}
+            rfInstance={rfInstance}
+            schema={n.data.schema}
+            contentType={n.data.contentType}
+          />
+        }
+      };
+    }
+    return n;
+  }));
 } 

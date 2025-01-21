@@ -1,5 +1,6 @@
 import { ReactFlowInstance, Node, Edge } from '@xyflow/react';
 import { useState } from 'react';
+import { editResponseDescription } from './Edit';
 
 export interface ResponseNodeProps {
   statusCode: string;
@@ -163,8 +164,39 @@ export function ResponseNode({ statusCode, description, schema, contentType, nod
             fontSize: '0.9em',
             color: '#4A5568',
             textAlign: 'center',
+            position: 'relative',
+            paddingRight: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '24px',
           }}>
             {description}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                editResponseDescription(nodeId, rfInstance);
+              }}
+              style={{
+                border: 'none',
+                background: 'none',
+                cursor: 'pointer',
+                padding: '2px 4px',
+                fontSize: '0.9em',
+                opacity: 0.6,
+                transition: 'opacity 0.2s',
+                display: 'flex',
+                alignItems: 'center',
+                position: 'absolute',
+                right: '0',
+                top: '50%',
+                transform: 'translateY(-50%)',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = '0.6'}
+            >
+              ✏️
+            </button>
           </div>
         </div>
       </div>
