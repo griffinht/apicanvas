@@ -1,4 +1,5 @@
 import { ReactFlowInstance } from '@xyflow/react';
+import { ResponseNodeData } from './openapi/paths/methods/response/Response';
 
 export const getPaths = (rfInstance: ReactFlowInstance) => {
   const flowData = rfInstance.toObject();
@@ -55,16 +56,12 @@ export const getPaths = (rfInstance: ReactFlowInstance) => {
       if (!responseNode) return;
 
       // @ts-ignore
-      const statusCode = responseNode.data.statusCode;
-      // @ts-ignore
-      const description = responseNode.data.label.props.description;
-      // @ts-ignore
-      const schema = responseNode.data.label.props.schema;
-      // @ts-ignore
-      const contentType = responseNode.data.label.props.contentType;
+      const responseData = responseNode.data as ResponseNodeData;
+      const statusCode = responseData.statusCode;
+      const { description, schema, contentType } = responseData.label.props;
 
       paths[fullPath][method].responses[statusCode] = {
-        description: description,
+        description,
         ...(schema && contentType && {
           content: {
             [contentType]: {

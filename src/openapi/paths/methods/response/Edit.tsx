@@ -58,7 +58,9 @@ export function editResponseDescription(nodeId: string, rfInstance: ReactFlowIns
   const node = nodes.find(n => n.id === nodeId);
   if (!node) return;
   
-  const currentDescription = node.data.label.props.description;
+  // @ts-ignore
+  const data = node.data as ResponseNodeData;
+  const currentDescription = data.label.props.description;
   const newDescription = prompt('Enter new description:', currentDescription);
   
   if (!newDescription || newDescription === currentDescription) {
@@ -72,12 +74,12 @@ export function editResponseDescription(nodeId: string, rfInstance: ReactFlowIns
         data: {
           ...n.data,
           label: <ResponseNode
-            statusCode={n.data.statusCode}
+            statusCode={data.statusCode}
             description={newDescription}
             nodeId={nodeId}
             rfInstance={rfInstance}
             schema={n.data.schema}
-            contentType={n.data.contentType}
+            contentType={data.contentType}
           />
         }
       };

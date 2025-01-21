@@ -91,12 +91,14 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFl
             if (value.responses) {
               Object.entries(value.responses).forEach(([statusCode, response]: [string, any]) => {
                 const responseNodeId = `${methodNodeId}-${statusCode}`;
+                // @ts-ignore
                 const { nodes: responseNodes, edges: responseEdges } = createResponseNode(
                   statusCode,
                   response.description,
                   responseNodeId,
                   rfInstance,
                   isChildOfCollapsed || isCollapsed,
+                  // @ts-ignore
                   response.content ? Object.values(response.content)[0].schema : undefined,
                   response.content ? Object.keys(response.content)[0] : undefined
                 );
@@ -116,6 +118,7 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFl
                   const [contentType, content] = Object.entries(response.content)[0];
                   responseNodes[0].data = {
                     ...responseNodes[0].data,
+                    // @ts-ignore
                     schema: content.schema,
                     contentType
                   };

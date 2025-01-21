@@ -11,12 +11,21 @@ export interface ResponseNodeProps {
   contentType?: string;
 }
 
+export interface ResponseNodeData {
+  label: React.ReactElement<ResponseNodeProps>;
+  statusCode: string;
+  schema?: any;
+  contentType?: string;
+}
+
 export function editResponseCode(nodeId: string, rfInstance: ReactFlowInstance) {
   const nodes = rfInstance.getNodes();
   const node = nodes.find(n => n.id === nodeId);
   if (!node) return;
   
-  const currentCode = node.data?.statusCode as string;
+  // @ts-ignore
+  const data = node.data as ResponseNodeData;
+  const currentCode = data.statusCode;
   const newCode = prompt('Enter new status code:', currentCode);
   
   if (!newCode || newCode === currentCode || !/^[1-5][0-9][0-9]$/.test(newCode)) {
@@ -25,7 +34,9 @@ export function editResponseCode(nodeId: string, rfInstance: ReactFlowInstance) 
 
   rfInstance.setNodes(nodes.map(n => {
     if (n.id === nodeId) {
-      const existingDescription = n.data.label.props.description;
+      // @ts-ignore
+      const data = n.data as ResponseNodeData;
+      const existingDescription = data.label.props.description;
       
       return {
         ...n,
@@ -37,8 +48,8 @@ export function editResponseCode(nodeId: string, rfInstance: ReactFlowInstance) 
             description={existingDescription}
             nodeId={nodeId}
             rfInstance={rfInstance}
-            schema={n.data.schema}
-            contentType={n.data.contentType}
+            schema={data.schema}
+            contentType={data.contentType}
           />
         },
         style: getResponseNodeStyle(newCode)
