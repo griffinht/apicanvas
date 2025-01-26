@@ -19,12 +19,21 @@ fi
 current_version=$(node -p "require('./package.json').version")
 new_version=$(echo $current_version | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
 
+# Update version in package.json
+echo "Updating version to $new_version in package.json..."
+tmp=$(mktemp)
+jq ".version = \"$new_version\"" package.json > "$tmp" && mv "$tmp" package.json
+
+# Commit the version change
+git add package.json
+git commit -m "chore: bump version to $new_version"
+
 # Create a new tag
 echo "Creating tag v$new_version..."
 git tag -a "v$new_version" -m "Release v$new_version"
 
-# Push tags
-echo "Pushing tags..."
-git push origin --follow-tags
+# Push changes and tags
+echo "Pushing changes and tags..."
+git push origin $current_branch --tags
 
 echo "Release complete! 🎉" 
