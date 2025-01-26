@@ -25,6 +25,6 @@ git tag -a "v$new_version" -m "Release v$new_version"
 
 # Push tags
 echo "Pushing tags..."
-git push origin --tags
+git push origin --follow-tags
 
 echo "Release complete! 🎉" 
