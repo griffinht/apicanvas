@@ -15,23 +15,13 @@ if [[ "$current_branch" != "main" && "$current_branch" != "master" ]]; then
     exit 1
 fi
 
-# Get the version bump type from argument
-bump_type=$1
-
-# Validate bump type
-if [[ "$bump_type" != "patch" && "$bump_type" != "minor" && "$bump_type" != "major" ]]; then
-    echo "Error: Please specify version bump type: patch, minor, or major"
-    echo "Usage: ./release.sh <patch|minor|major>"
-    exit 1
-fi
-
 # Pull latest changes
 echo "Pulling latest changes..."
 git pull origin $current_branch
 
-# Bump version in package.json and create git tag
-echo "Bumping $bump_type version..."
-npm version $bump_type
+# Bump patch version in package.json and create git tag
+echo "Bumping patch version..."
+npm version patch
 
 # Push changes and tags
 echo "Pushing changes and tags..."
