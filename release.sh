@@ -19,12 +19,16 @@ fi
 echo "Pulling latest changes..."
 git pull origin $current_branch
 
-# Bump patch version in package.json and create git tag
-echo "Bumping patch version..."
-npm version patch
+# Get current version from package.json and increment patch
+current_version=$(node -p "require('./package.json').version")
+new_version=$(echo $current_version | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
 
-# Push changes and tags
-echo "Pushing changes and tags..."
-git push origin $current_branch --tags
+# Create a new tag
+echo "Creating tag v$new_version..."
+git tag -a "v$new_version" -m "Release v$new_version"
+
+# Push tags
+echo "Pushing tags..."
+git push origin --tags
 
 echo "Release complete! 🎉" 
