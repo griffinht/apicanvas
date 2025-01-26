@@ -1,6 +1,7 @@
 import { Save } from './Save.tsx';
 import { Load } from './Load.tsx';
 import { Download } from './Download.tsx';
+import { Share } from './Share.tsx';
 
 interface DragBarProps {
   onLoadFromEditor: () => void;
@@ -138,24 +139,7 @@ export function DragBar({
         <Save />
         <Download />
         <Load />
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            loadSampleApi();
-          }}
-          style={{ margin: '12px 0', width: '70px' }}
-        >
-          try sample
-        </button>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            alert('TODO: Implement share functionality');
-          }}
-          style={{ margin: '12px 0', width: '70px' }}
-        >
-          share
-        </button>
+        <Share />
       </div>
 
       {/* Links section */}
