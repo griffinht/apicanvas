@@ -228,27 +228,8 @@ export default function App() {
             <MiniMap />
             <Controls />
             <Panel position="top-left">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={autoLoad}
-                  onChange={(e) => {
-                    setAutoLoad(e.target.checked);
-                    if (e.target.checked) {
-                      loadFromEditor();
-                    }
-                  }}
-                /> Auto-load
-              </label>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={autoSave}
-                  onChange={(e) => setAutoSave(e.target.checked)}
-                /> Auto-save
-              </label>
               <button onClick={() => setDirection(direction === 'TB' ? 'LR' : 'TB')}>
-                {direction === 'TB' ? 'horizontal' : 'vertical'} layout
+                Toggle layout
               </button>
             </Panel>
           </ReactFlow>
