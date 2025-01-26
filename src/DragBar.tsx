@@ -13,7 +13,6 @@ interface DragBarProps {
 export function DragBar({ 
   onLoadFromEditor, 
   onSaveToEditor, 
-  splitPosition,
   onSplitPositionChange,
   autoSyncLeft,
   autoSyncRight,
@@ -34,11 +33,13 @@ export function DragBar({
     }
   };
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleMouseDown = (event: React.MouseEvent) => {
+    event.preventDefault();
+    
     const handleMouseMove = (e: MouseEvent) => {
       const windowWidth = window.innerWidth;
       const newPosition = (e.clientX / windowWidth) * 100;
-      onSplitPositionChange(Math.min(Math.max(newPosition, 20), 80)); // Limit between 20% and 80%
+      onSplitPositionChange(Math.min(Math.max(newPosition, 20), 80));
     };
 
     const handleMouseUp = () => {

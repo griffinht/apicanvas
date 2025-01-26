@@ -34,12 +34,6 @@ export default function App() {
   const [direction, setDirection] = useState<'TB' | 'LR'>(() => 
     (localStorage.getItem('direction') as 'TB' | 'LR') || 'TB'
   );
-  const [autoLoad, setAutoLoad] = useState(() => 
-    localStorage.getItem('autoLoad') === 'true'
-  );
-  const [autoSave, setAutoSave] = useState(() => 
-    localStorage.getItem('autoSave') === 'true'
-  );
   const [lastSaveTime, setLastSaveTime] = useState(0);
   const SAVE_DELAY = 1000; // 1 second in milliseconds
   const [splitPosition, setSplitPosition] = useState(50);
@@ -49,24 +43,6 @@ export default function App() {
   const [autoSyncRight, setAutoSyncRight] = useState(() => 
     localStorage.getItem('autoSyncRight') === 'true'
   );
-
-  useEffect(() => {
-    localStorage.setItem('autoLoad', autoLoad.toString());
-  }, [autoLoad]);
-
-  useEffect(() => {
-    localStorage.setItem('autoSave', autoSave.toString());
-  }, [autoSave]);
-
-  useEffect(() => {
-    if (!rfInstance) {
-      console.log('useEffect not firing: rfInstance is not set');
-      return;
-    }
-    const { nodes: layoutedNodes, edges: layoutedEdges } = setPaths(getPaths(rfInstance), direction, rfInstance);
-    setNodes([...layoutedNodes]);
-    setEdges([...layoutedEdges]);
-  }, [direction]);
 
   useEffect(() => {
     localStorage.setItem('direction', direction);
@@ -79,6 +55,16 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('autoSyncRight', autoSyncRight.toString());
   }, [autoSyncRight]);
+
+  useEffect(() => {
+    if (!rfInstance) {
+      console.log('useEffect not firing: rfInstance is not set');
+      return;
+    }
+    const { nodes: layoutedNodes, edges: layoutedEdges } = setPaths(getPaths(rfInstance), direction, rfInstance);
+    setNodes([...layoutedNodes]);
+    setEdges([...layoutedEdges]);
+  }, [direction]);
 
   const onConnect: OnConnect = useCallback(
     (connection) => setEdges((edges) => addEdge(connection, edges)),
@@ -141,7 +127,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (!autoSave || !rfInstance) return;
+    if (!rfInstance) return;
     
     const now = Date.now();
     if (now - lastSaveTime < SAVE_DELAY) return;
