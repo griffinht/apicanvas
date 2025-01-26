@@ -1,3 +1,7 @@
+import { Save } from './Save.tsx';
+import { Load } from './Load.tsx';
+import { Download } from './Download.tsx';
+
 interface DragBarProps {
   onLoadFromEditor: () => void;
   onSaveToEditor: () => void;
@@ -131,24 +135,9 @@ export function DragBar({
         flexDirection: 'column',
         alignItems: 'center'
       }}>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            alert('hi');
-          }}
-          style={{ margin: '12px 0', width: '70px' }}
-        >
-          save
-        </button>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            alert('hi');
-          }}
-          style={{ margin: '12px 0', width: '70px' }}
-        >
-          load
-        </button>
+        <Save />
+        <Download />
+        <Load />
         <button
           onClick={(e) => {
             e.stopPropagation();

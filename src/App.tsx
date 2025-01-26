@@ -14,7 +14,7 @@ import {
 } from '@xyflow/react';
 
 import { CustomEditor } from './CustomEditor.tsx';
-import { DragBar } from './DragBar';
+import { DragBar } from './dragbar/DragBar.tsx';
 
 import '@xyflow/react/dist/style.css';
 
