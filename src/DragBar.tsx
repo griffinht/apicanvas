@@ -7,6 +7,7 @@ interface DragBarProps {
   autoSyncRight: boolean;
   onAutoSyncLeftChange: (value: boolean) => void;
   onAutoSyncRightChange: (value: boolean) => void;
+  onTrySample: () => void;
 }
 
 export function DragBar({ 
@@ -18,7 +19,21 @@ export function DragBar({
   autoSyncRight,
   onAutoSyncLeftChange,
   onAutoSyncRightChange
-}: DragBarProps) {
+}: Omit<DragBarProps, 'onTrySample'>) {
+  const loadSampleApi = async () => {
+    try {
+      const response = await fetch('/openapi.json');
+      if (!response.ok) {
+        throw new Error('Failed to fetch sample API');
+      }
+      const sampleApi = await response.json();
+      (window as any).editor?.setValue(JSON.stringify(sampleApi, null, 4));
+    } catch (error) {
+      console.error('Error loading sample API:', error);
+      alert('Failed to load sample API');
+    }
+  };
+
   const handleMouseDown = (e: React.MouseEvent) => {
     const handleMouseMove = (e: MouseEvent) => {
       const windowWidth = window.innerWidth;
@@ -69,23 +84,23 @@ export function DragBar({
               e.stopPropagation();
               onAutoSyncLeftChange(e.target.checked);
             }}
-          /> auto ←
+          /> ← auto
         </label>
         <button
           onClick={(e) => {
             e.stopPropagation();
             onSaveToEditor();
           }}
-          style={{ margin: '4px 0', width: '50px' }}
+          style={{ margin: '4px 0', width: '70px' }}
         >
-          sync ←
+          ← sync
         </button>
         <button
           onClick={(e) => {
             e.stopPropagation();
             onLoadFromEditor();
           }}
-          style={{ margin: '4px 0', width: '50px' }}
+          style={{ margin: '4px 0', width: '70px' }}
         >
           sync →
         </button>
@@ -120,7 +135,7 @@ export function DragBar({
             e.stopPropagation();
             alert('hi');
           }}
-          style={{ margin: '12px 0', width: '50px' }}
+          style={{ margin: '12px 0', width: '70px' }}
         >
           save
         </button>
@@ -129,18 +144,18 @@ export function DragBar({
             e.stopPropagation();
             alert('hi');
           }}
-          style={{ margin: '12px 0', width: '50px' }}
+          style={{ margin: '12px 0', width: '70px' }}
         >
           load
         </button>
         <button
           onClick={(e) => {
             e.stopPropagation();
-            alert('hi');
+            loadSampleApi();
           }}
-          style={{ margin: '12px 0', width: '50px' }}
+          style={{ margin: '12px 0', width: '70px' }}
         >
-          try
+          try sample
         </button>
       </div>
     </div>
