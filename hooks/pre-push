@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Store the current directory
+CURRENT_DIR=$(pwd)
+
+echo "Running npm build before push..."
+
+# Run npm build
+npm run build
+BUILD_RESULT=$?
+
+# If build failed, prevent push
+if [ $BUILD_RESULT -ne 0 ]; then
+    echo "❌ Build failed - push aborted"
+    exit 1
+fi
+
+echo "✅ Build successful - proceeding with push"
+exit 0 
