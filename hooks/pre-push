@@ -16,4 +16,7 @@ if [ $BUILD_RESULT -ne 0 ]; then
 fi
 
 echo "✅ Build successful - proceeding with push"
+echo ""
+echo "🔗 github link: https://github.com/griffinht/oas2tree2 🔗"
+echo "" 
 exit 0 
