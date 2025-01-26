@@ -10,3 +10,7 @@
 https://apis.guru/awesome-openapi3/category.html#editors
 
 https://openapi.tools/#gui-editors
+
+# analytics
+
+https://plausible.io/oas2tree2.griffinht.com
