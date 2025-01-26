@@ -158,6 +158,15 @@ export function DragBar({
         >
           try sample
         </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            alert('TODO: Implement share functionality');
+          }}
+          style={{ margin: '12px 0', width: '70px' }}
+        >
+          share
+        </button>
       </div>
 
       {/* Links section */}
