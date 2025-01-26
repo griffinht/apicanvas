@@ -7,8 +7,13 @@ export function Save() {
     }
 
     try {
+      // Type check for File System Access API support
+      if (!('showSaveFilePicker' in window)) {
+        throw new Error('File System Access API not supported');
+      }
+
       // Create a handle to save the file
-      const handle = await window.showSaveFilePicker({
+      const handle = await (window as any).showSaveFilePicker({
         suggestedName: 'openapi-spec.json',
         types: [{
           description: 'JSON Files',
@@ -30,7 +35,11 @@ export function Save() {
       // User cancelled or API not supported
       if (error instanceof Error && error.name !== 'AbortError') {
         console.error('Error saving file:', error);
-        alert('Failed to save file');
+        if (error.message === 'File System Access API not supported') {
+          alert('Your browser doesn\'t support saving files. Try using the download button instead.');
+        } else {
+          alert('Failed to save file');
+        }
       }
     }
   };

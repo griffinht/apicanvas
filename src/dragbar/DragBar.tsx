@@ -2,6 +2,8 @@ import { Save } from './Save.tsx';
 import { Load } from './Load.tsx';
 import { Download } from './Download.tsx';
 import { Share } from './Share.tsx';
+import { SyncControls } from './SyncControls';
+import { TrySample } from './TrySample';
 
 interface DragBarProps {
   onLoadFromEditor: () => void;
@@ -12,7 +14,6 @@ interface DragBarProps {
   autoSyncRight: boolean;
   onAutoSyncLeftChange: (value: boolean) => void;
   onAutoSyncRightChange: (value: boolean) => void;
-  onTrySample: () => void;
 }
 
 export function DragBar({ 
@@ -23,21 +24,7 @@ export function DragBar({
   autoSyncRight,
   onAutoSyncLeftChange,
   onAutoSyncRightChange
-}: Omit<DragBarProps, 'onTrySample'>) {
-  const loadSampleApi = async () => {
-    try {
-      const response = await fetch('/openapi.json');
-      if (!response.ok) {
-        throw new Error('Failed to fetch sample API');
-      }
-      const sampleApi = await response.json();
-      (window as any).editor?.setValue(JSON.stringify(sampleApi, null, 4));
-    } catch (error) {
-      console.error('Error loading sample API:', error);
-      alert('Failed to load sample API');
-    }
-  };
-
+}: DragBarProps) {
   const handleMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
     
@@ -75,57 +62,14 @@ export function DragBar({
     >
       <div style={{ flex: 1 }} /> {/* Spacer */}
       
-      {/* Sync controls */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <label style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          fontSize: '12px',
-          margin: '4px 0'
-        }}>
-          <input
-            type="checkbox"
-            checked={autoSyncLeft}
-            onChange={(e) => {
-              e.stopPropagation();
-              onAutoSyncLeftChange(e.target.checked);
-            }}
-          /> ← auto
-        </label>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onSaveToEditor();
-          }}
-          style={{ margin: '4px 0', width: '70px' }}
-        >
-          ← sync
-        </button>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onLoadFromEditor();
-          }}
-          style={{ margin: '4px 0', width: '70px' }}
-        >
-          sync →
-        </button>
-        <label style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          fontSize: '12px',
-          margin: '4px 0'
-        }}>
-          <input
-            type="checkbox"
-            checked={autoSyncRight}
-            onChange={(e) => {
-              e.stopPropagation();
-              onAutoSyncRightChange(e.target.checked);
-            }}
-          /> auto →
-        </label>
-      </div>
+      <SyncControls
+        autoSyncLeft={autoSyncLeft}
+        autoSyncRight={autoSyncRight}
+        onAutoSyncLeftChange={onAutoSyncLeftChange}
+        onAutoSyncRightChange={onAutoSyncRightChange}
+        onSaveToEditor={onSaveToEditor}
+        onLoadFromEditor={onLoadFromEditor}
+      />
 
       <div style={{ flex: 1 }} /> {/* Spacer */}
 
@@ -140,6 +84,7 @@ export function DragBar({
         <Download />
         <Load />
         <Share />
+        <TrySample />
       </div>
 
       {/* Links section */}
