@@ -15,10 +15,6 @@ if [[ "$current_branch" != "main" && "$current_branch" != "master" ]]; then
     exit 1
 fi
 
-# Pull latest changes
-echo "Pulling latest changes..."
-git pull origin $current_branch
-
 # Get current version from package.json and increment patch
 current_version=$(node -p "require('./package.json').version")
 new_version=$(echo $current_version | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
