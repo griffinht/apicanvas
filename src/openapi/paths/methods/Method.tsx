@@ -74,7 +74,16 @@ export function MethodNode({ method, nodeId, rfInstance, direction }: MethodNode
       position: 'relative',
       width: '100%',
       height: '100%',
-    }}>
+    }}
+    onMouseEnter={e => {
+      const menu = e.currentTarget.querySelector('.hover-menu') as HTMLElement;
+      if (menu) menu.style.opacity = '1';
+    }}
+    onMouseLeave={e => {
+      const menu = e.currentTarget.querySelector('.hover-menu') as HTMLElement;
+      if (menu) menu.style.opacity = '0';
+    }}
+    >
       <select 
         defaultValue={method.toUpperCase()}
         onChange={(e) => editMethod(nodeId, e.target.value, rfInstance, direction)}
@@ -92,24 +101,24 @@ export function MethodNode({ method, nodeId, rfInstance, direction }: MethodNode
         <option value="PATCH">PATCH</option>
       </select>
 
-      <div style={{
-        backgroundColor: '#fff',
-        padding: '4px 8px',
-        borderRadius: '4px',
-        border: '1px solid #ddd',
-        display: 'flex',
-        gap: '4px',
-        opacity: 0,
-        transition: 'opacity 0.2s ease',
-        position: 'absolute',
-        left: '100%',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        marginLeft: '8px',
-        zIndex: 10,
-      }}
-      onMouseEnter={e => e.currentTarget.style.opacity = '1'}
-      onMouseLeave={e => e.currentTarget.style.opacity = '0'}
+      <div 
+        className="hover-menu"
+        style={{
+          backgroundColor: '#fff',
+          padding: '4px 8px',
+          borderRadius: '4px',
+          border: '1px solid #ddd',
+          display: 'flex',
+          gap: '4px',
+          opacity: 0,
+          transition: 'opacity 0.2s ease',
+          position: 'absolute',
+          left: '100%',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          marginLeft: '8px',
+          zIndex: 10,
+        }}
       >
         <button 
           onClick={() => {
