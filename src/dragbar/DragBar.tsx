@@ -4,6 +4,7 @@ import { Download } from './Download.tsx';
 import { Share } from './Share.tsx';
 import { SyncControls } from './SyncControls';
 import { TrySample } from './TrySample';
+import { Version } from './Version';
 
 interface DragBarProps {
   onLoadFromEditor: () => void;
@@ -23,7 +24,7 @@ export function DragBar({
   autoSyncLeft,
   autoSyncRight,
   onAutoSyncLeftChange,
-  onAutoSyncRightChange
+  onAutoSyncRightChange,
 }: DragBarProps) {
   const handleMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -152,6 +153,7 @@ export function DragBar({
           </svg>
           source code
         </a>
+        <Version />
       </div>
     </div>
   );
