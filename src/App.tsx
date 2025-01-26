@@ -14,6 +14,7 @@ import {
 } from '@xyflow/react';
 
 import { CustomEditor } from './CustomEditor.tsx';
+import { DragBar } from './DragBar';
 
 import '@xyflow/react/dist/style.css';
 
@@ -41,6 +42,13 @@ export default function App() {
   );
   const [lastSaveTime, setLastSaveTime] = useState(0);
   const SAVE_DELAY = 1000; // 1 second in milliseconds
+  const [splitPosition, setSplitPosition] = useState(50);
+  const [autoSyncLeft, setAutoSyncLeft] = useState(() => 
+    localStorage.getItem('autoSyncLeft') === 'true'
+  );
+  const [autoSyncRight, setAutoSyncRight] = useState(() => 
+    localStorage.getItem('autoSyncRight') === 'true'
+  );
 
   useEffect(() => {
     localStorage.setItem('autoLoad', autoLoad.toString());
@@ -63,6 +71,14 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('direction', direction);
   }, [direction]);
+
+  useEffect(() => {
+    localStorage.setItem('autoSyncLeft', autoSyncLeft.toString());
+  }, [autoSyncLeft]);
+
+  useEffect(() => {
+    localStorage.setItem('autoSyncRight', autoSyncRight.toString());
+  }, [autoSyncRight]);
 
   const onConnect: OnConnect = useCallback(
     (connection) => setEdges((edges) => addEdge(connection, edges)),
@@ -146,26 +162,55 @@ export default function App() {
     }
   };
 
+  // Auto-sync left (graph to editor)
+  useEffect(() => {
+    if (!autoSyncLeft || !rfInstance) return;
+    
+    const now = Date.now();
+    if (now - lastSaveTime < SAVE_DELAY) return;
+    
+    saveToEditor();
+    setLastSaveTime(now);
+  }, [nodes, edges, title, version]);
+
+  // Auto-sync right (editor to graph) with debounce
+  const handleEditorChange = (value: string | undefined) => {
+    if (!value) return;
+    if (!autoSyncRight) return;
+    
+    const now = Date.now();
+    if (now - lastSaveTime < SAVE_DELAY) return;
+    
+    try {
+      setApi(JSON.parse(value));
+      setLastSaveTime(now);
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
+    }
+  };
+
   return (
     <ReactFlowProvider>
       <div style={{ display: 'flex', width: '100vw', height: '100vh' }}>
-        <div style={{ flex: '1', height: '100%' }}>
+        <div style={{ width: `${splitPosition}%`, height: '100%' }}>
           <CustomEditor 
             onMount={(editor) => {
               (window as any).editor = editor;
             }}
-            onChange={(value) => {
-              if (!value) return;
-              if (!autoLoad) return;
-              try {
-                setApi(JSON.parse(value));
-              } catch (error) {
-                console.error('Error parsing JSON:', error);
-              }
-            }}
+            onChange={handleEditorChange}
           />
         </div>
-        <div style={{ flex: '1', height: '100%' }}>
+        <DragBar
+          onLoadFromEditor={loadFromEditor}
+          onSaveToEditor={saveToEditor}
+          splitPosition={splitPosition}
+          onSplitPositionChange={setSplitPosition}
+          autoSyncLeft={autoSyncLeft}
+          autoSyncRight={autoSyncRight}
+          onAutoSyncLeftChange={setAutoSyncLeft}
+          onAutoSyncRightChange={setAutoSyncRight}
+        />
+        <div style={{ width: `${100 - splitPosition}%`, height: '100%' }}>
           <ApiInfoBar title={title} setTitle={setTitle} version={version} setVersion={setVersion} />
           <ReactFlow
             nodes={nodes}
@@ -183,12 +228,6 @@ export default function App() {
             <MiniMap />
             <Controls />
             <Panel position="top-left">
-              <button onClick={() => {
-                if (window.confirm('This will overwrite the contents of your editor. Are you sure?')) {
-                  saveToEditor();
-                }
-              }}>save</button>
-              <button onClick={loadFromEditor}>load</button>
               <label>
                 <input
                   type="checkbox"
