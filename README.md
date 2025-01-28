@@ -7,6 +7,11 @@
 | [Node Based UI](https://github.com/xyflow/awesome-node-based-uis) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 
 # todo
+
+- [ ] add more features to table - "what does swagger editor have that we don't"
+- [ ] add more tools to the table
+
+
 https://apis.guru/awesome-openapi3/category.html#editors
 
 https://openapi.tools/#gui-editors
