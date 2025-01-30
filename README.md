@@ -16,3 +16,10 @@ https://apis.guru/awesome-openapi3/category.html#editors
 
 https://openapi.tools/#gui-editors
 
+# conferences
+
+
+https://conf.researchr.org/track/fse-2025/fse-2025-demonstrations jan 13
+https://conf.researchr.org/track/models-2024/models-2024-technical-track? last week march. april 4 (research paper) michigan
+https://icwe2025.webengineering.org/ mar 31
+https://conf.researchr.org/track/issta-2025/issta-2025-tool-demonstrations apr 4
