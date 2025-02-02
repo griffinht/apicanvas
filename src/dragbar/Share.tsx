@@ -1,74 +1,40 @@
 import { useState } from 'react';
 
 export function Share() {
-  const [showModal, setShowModal] = useState(false);
-
-  const handleShare = async () => {
-    const editorContent = (window as any).editor?.getValue();
-    if (!editorContent) {
-      alert('No content to share');
-      return;
-    }
-    setShowModal(true);
-  };
-
   return (
-    <>
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          handleShare();
-        }}
-        style={{ margin: '12px 0', width: '70px' }}
+    <a
+      href="https://github.com/griffinht/oas2tree2/issues/13"
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        padding: '8px 12px',
+        margin: '4px 0',
+        backgroundColor: 'transparent',
+        border: '1px solid #ccc',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '4px',
+        textDecoration: 'none',
+        color: 'inherit'
+      }}
+    >
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
-        share
-      </button>
-
-      {showModal && (
-        <div 
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 1000,
-          }}
-          onClick={() => setShowModal(false)}
-        >
-          <div 
-            style={{
-              backgroundColor: 'white',
-              padding: '20px',
-              borderRadius: '8px',
-              maxWidth: '500px',
-              color: 'black',
-            }}
-            onClick={e => e.stopPropagation()}
-          >
-            <h3>How to Share Your Code</h3>
-            <ol>
-              <li>Click the button below to open Pastebin in a new tab</li>
-              <li>Copy your code from the editor</li>
-              <li>Paste it into Pastebin</li>
-              <li>Click "Create New Paste"</li>
-              <li>Copy the URL and share it with others</li>
-            </ol>
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
-              <button onClick={() => window.open('https://pastebin.com/', '_blank')}>
-                Open Pastebin
-              </button>
-              <button onClick={() => setShowModal(false)}>
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+        <polyline points="16 6 12 2 8 6" />
+        <line x1="12" y1="2" x2="12" y2="15" />
+      </svg>
+      Share
+    </a>
   );
-} 
+}
