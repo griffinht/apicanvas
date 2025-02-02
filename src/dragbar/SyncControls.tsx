@@ -28,6 +28,9 @@ export function SyncControls({
           checked={autoSyncLeft}
           onChange={(e) => {
             e.stopPropagation();
+            if (e.target.checked && autoSyncRight) {
+              alert('warning both auto sync directions are turned on. this might be buggy.');
+            }
             onAutoSyncLeftChange(e.target.checked);
           }}
         /> ← auto
@@ -61,10 +64,13 @@ export function SyncControls({
           checked={autoSyncRight}
           onChange={(e) => {
             e.stopPropagation();
+            if (e.target.checked && autoSyncLeft) {
+              alert('Warning: Both auto-sync directions are now enabled. This may cause conflicts.');
+            }
             onAutoSyncRightChange(e.target.checked);
           }}
         /> auto →
       </label>
     </div>
   );
-} 
+}
