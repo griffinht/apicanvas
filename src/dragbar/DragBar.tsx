@@ -5,6 +5,7 @@ import { Share } from './Share.tsx';
 import { SyncControls } from './SyncControls';
 import { TrySample } from './TrySample';
 import { Version } from './Version';
+import { NewProject } from './New.tsx';
 
 import { ReactFlowInstance } from '@xyflow/react';
 
@@ -85,8 +86,9 @@ export function DragBar({
         flexDirection: 'column',
         alignItems: 'center'
       }}>
+        <NewProject />
         <Save />
-        <Export flowInstance={flowInstance} />  {/* Pass the flowInstance prop */}
+        <Export flowInstance={flowInstance} />
         <Load />
         <Share />
         <TrySample />
