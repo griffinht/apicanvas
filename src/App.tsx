@@ -195,6 +195,7 @@ export default function App() {
           autoSyncRight={autoSyncRight}
           onAutoSyncLeftChange={setAutoSyncLeft}
           onAutoSyncRightChange={setAutoSyncRight}
+          flowInstance={rfInstance}
         />
         <div style={{ width: `${100 - splitPosition}%`, height: '100%' }}>
           <ApiInfoBar title={title} setTitle={setTitle} version={version} setVersion={setVersion} />

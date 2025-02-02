@@ -1,10 +1,12 @@
 import { Save } from './Save.tsx';
 import { Load } from './Load.tsx';
-import { Download } from './Download.tsx';
+import { Export } from './Export.tsx';
 import { Share } from './Share.tsx';
 import { SyncControls } from './SyncControls';
 import { TrySample } from './TrySample';
 import { Version } from './Version';
+
+import { ReactFlowInstance } from '@xyflow/react';
 
 interface DragBarProps {
   onLoadFromEditor: () => void;
@@ -15,6 +17,7 @@ interface DragBarProps {
   autoSyncRight: boolean;
   onAutoSyncLeftChange: (value: boolean) => void;
   onAutoSyncRightChange: (value: boolean) => void;
+  flowInstance: ReactFlowInstance | null;  // Add this line
 }
 
 export function DragBar({ 
@@ -25,6 +28,7 @@ export function DragBar({
   autoSyncRight,
   onAutoSyncLeftChange,
   onAutoSyncRightChange,
+  flowInstance,  // Add this line
 }: DragBarProps) {
   const handleMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -82,7 +86,7 @@ export function DragBar({
         alignItems: 'center'
       }}>
         <Save />
-        <Download />
+        <Export flowInstance={flowInstance} />  {/* Pass the flowInstance prop */}
         <Load />
         <Share />
         <TrySample />
@@ -157,4 +161,4 @@ export function DragBar({
       </div>
     </div>
   );
-} 
+}
