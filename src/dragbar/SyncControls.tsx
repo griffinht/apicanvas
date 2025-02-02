@@ -5,6 +5,7 @@ interface SyncControlsProps {
   onAutoSyncRightChange: (value: boolean) => void;
   onSaveToEditor: () => void;
   onLoadFromEditor: () => void;
+  syncError?: string | null;
 }
 
 export function SyncControls({
@@ -13,10 +14,28 @@ export function SyncControls({
   onAutoSyncLeftChange,
   onAutoSyncRightChange,
   onSaveToEditor,
-  onLoadFromEditor
+  onLoadFromEditor,
+  syncError
 }: SyncControlsProps) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      {syncError && (
+        <button
+          onClick={() => alert(syncError)}
+          style={{
+            border: 'none',
+            background: 'none',
+            cursor: 'pointer',
+            color: '#DC2626',
+            fontSize: '16px',
+            padding: '4px',
+            margin: '4px 0'
+          }}
+        >
+          ⚠️
+        </button>
+      )}
+      
       <label style={{ 
         display: 'flex', 
         alignItems: 'center', 

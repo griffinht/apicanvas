@@ -19,9 +19,10 @@ interface DragBarProps {
   onAutoSyncLeftChange: (value: boolean) => void;
   onAutoSyncRightChange: (value: boolean) => void;
   flowInstance: ReactFlowInstance | null;  // Add this line
+  syncError?: string | null;
 }
 
-export function DragBar({ 
+export function DragBar({
   onLoadFromEditor, 
   onSaveToEditor, 
   onSplitPositionChange,
@@ -29,7 +30,8 @@ export function DragBar({
   autoSyncRight,
   onAutoSyncLeftChange,
   onAutoSyncRightChange,
-  flowInstance,  // Add this line
+  flowInstance,
+  syncError,
 }: DragBarProps) {
   const handleMouseDown = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -75,6 +77,7 @@ export function DragBar({
         onAutoSyncRightChange={onAutoSyncRightChange}
         onSaveToEditor={onSaveToEditor}
         onLoadFromEditor={onLoadFromEditor}
+        syncError={syncError}  // Add this line
       />
 
       <div style={{ flex: 1 }} /> {/* Spacer */}

@@ -43,6 +43,7 @@ export default function App() {
   const [autoSyncRight, setAutoSyncRight] = useState(() => 
     localStorage.getItem('autoSyncRight') === 'true'
   );
+  const [syncError, setSyncError] = useState<string | null>(null);
 
   useEffect(() => {
     localStorage.setItem('direction', direction);
@@ -162,7 +163,9 @@ export default function App() {
     try {
       setApi(JSON.parse(value));
       setLastSaveTime(now);
+      setSyncError(null);
     } catch (error) {
+      setSyncError(error + "");
       console.error('Error parsing JSON:', error);
     }
   };
@@ -188,6 +191,7 @@ export default function App() {
           onAutoSyncLeftChange={setAutoSyncLeft}
           onAutoSyncRightChange={setAutoSyncRight}
           flowInstance={rfInstance}
+          syncError={syncError}
         />
         <div style={{ width: `${100 - splitPosition}%`, height: '100%' }}>
           <ApiInfoBar title={title} setTitle={setTitle} version={version} setVersion={setVersion} />
