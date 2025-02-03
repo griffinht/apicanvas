@@ -1,4 +1,5 @@
-import { useRef } from 'react';
+import { useRef } from "react";
+import { Upload as LoadIcon } from "lucide-react";
 
 export function Load() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -15,13 +16,13 @@ export function Load() {
         JSON.parse(content);
         (window as any).editor?.setValue(content);
       } catch (error) {
-        console.error('Error loading file:', error);
-        alert('Invalid JSON file');
+        console.error("Error loading file:", error);
+        alert("Invalid JSON file");
       }
     };
     reader.readAsText(file);
     // Reset the input so the same file can be loaded again
-    event.target.value = '';
+    event.target.value = "";
   };
 
   return (
@@ -31,17 +32,18 @@ export function Load() {
         ref={fileInputRef}
         onChange={handleLoad}
         accept=".json"
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
       />
       <button
+      id="load"
         onClick={(e) => {
           e.stopPropagation();
           fileInputRef.current?.click();
         }}
-        style={{ margin: '12px 0', width: '70px' }}
+        aria-label="Load OpenAPI Specification"
       >
-        load
+        <LoadIcon size={18} />
       </button>
     </>
   );
-} 
+}

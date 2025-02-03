@@ -81,10 +81,14 @@ export function DragBar({
         flexDirection: 'column',
         alignItems: 'center'
       }}>
-        <Save />
-        <Download />
-        <Load />
-        <Share />
+        <div style={{ display: 'flex', gap: '5px' }}>
+          <Save />
+          <Download />
+        </div>
+        <div style={{ display: 'flex', gap: '5px', marginTop: '10px' }}>
+          <Load />
+          <Share />
+        </div>
         <TrySample />
       </div>
 

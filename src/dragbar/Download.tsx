@@ -1,36 +1,41 @@
+import { Download as DownloadIcon } from "lucide-react";
+
 export function Download() {
   const handleDownload = () => {
-    const editorContent = (window as any).editor?.getValue();
+    const editorContent = (window as unknown as { editor?: { getValue: () => string } }).editor?.getValue();
+    
     if (!editorContent) {
-      alert('No content to download');
+      alert("No content to download");
       return;
     }
 
     try {
-      const blob = new Blob([editorContent], { type: 'application/json' });
+      const blob = new Blob([editorContent], { type: "application/json" });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+
+      const a = document.createElement("a");
       a.href = url;
-      a.download = 'openapi-spec.json';
-      document.body.appendChild(a);
+      a.download = "openapi-spec.json";
       a.click();
-      document.body.removeChild(a);
+
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error downloading file:', error);
-      alert('Failed to download file');
+      console.error("Error downloading file:", error);
+      alert("Failed to download file");
     }
   };
 
   return (
     <button
+      id="download"
       onClick={(e) => {
         e.stopPropagation();
         handleDownload();
       }}
-      style={{ margin: '12px 0', width: '70px' }}
+      aria-label="Download OpenAPI Specification" data-tooltip="Download OpenAPI Specification"
     >
-      download
+      <DownloadIcon size={18} />
+      
     </button>
   );
-} 
+}
