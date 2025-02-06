@@ -14,6 +14,7 @@ export function SyncControls({
   onAutoSyncLeftChange,
   onAutoSyncRightChange,
   onSaveToEditor,
+  onLoadFromEditor,
   syncError
 }: SyncControlsProps) {
   return (
@@ -32,7 +33,7 @@ export function SyncControls({
         /> 
   </label>
 
-  {syncError && (
+      {syncError && (
         <button
           onClick={() => alert(syncError)}
           style={{
@@ -49,16 +50,15 @@ export function SyncControls({
         </button>
       )}
       
-  <label style={{ 
+      <label style={{ 
         display: 'flex', 
         alignItems: 'center', 
         fontSize: '12px',
         margin: '4px 0'
       }}>
         
-  </label>
-      
-  <button
+      </label>
+      <button
       id="sync-button"
       className="tooltip"
       data-tooltip="Manually sync the diagram to the editor"
@@ -87,10 +87,9 @@ export function SyncControls({
     data-tooltip="Manually sync the diagram to the editor"
     onClick={(e) => {
       e.stopPropagation();
-      onSaveToEditor();
+      onLoadFromEditor();
     }}
   >
-
     <svg
       width="24" 
       height="24" 
