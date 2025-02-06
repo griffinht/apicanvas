@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ReactFlowInstance } from '@xyflow/react';  // Update this line
 import { toPng, toSvg } from 'html-to-image';
+import { Download as ExportIcon } from 'lucide-react';
 
 interface ExportProps {
   flowInstance: ReactFlowInstance | null;
@@ -74,34 +75,10 @@ export function Export({ flowInstance }: ExportProps) {
   return (
     <div style={{ position: 'relative' }}>
       <button
+        id='download'
         onClick={() => setShowDropdown(!showDropdown)}
-        style={{
-          padding: '8px 12px',
-          margin: '4px 0',
-          backgroundColor: 'transparent',
-          border: '1px solid #ccc',
-          borderRadius: '4px',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '4px'
-        }}
       >
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-          <polyline points="7 10 12 15 17 10" />
-          <line x1="12" y1="15" x2="12" y2="3" />
-        </svg>
-        Export
+      <ExportIcon size={18} />
       </button>
       
       {showDropdown && (

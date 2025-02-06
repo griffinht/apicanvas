@@ -248,7 +248,10 @@ input {
   border-radius: 4px;
   transition: background-color 0.2s;
 }
-
+#try-sample:hover {
+  background-color: #34944630;
+  color: #2e8b57; 
+}
 #save{
   margin: 12px 0;
   width: 35px;
@@ -260,7 +263,10 @@ input {
   border-radius: 4px;
   transition: background-color 0.2s;
 }
-
+#save:hover {
+  background-color: #34944630;
+  color: #2e8b57; 
+}
 #download{
   margin: 12px 0;
   width: 35px;
@@ -271,6 +277,10 @@ input {
   cursor: pointer;
   border-radius: 4px;
   transition: background-color 0.2s;
+}
+#download:hover {
+  background-color: #34944630;
+  color: #2e8b57; 
 }
 #load{
   margin: 12px 0;
@@ -283,7 +293,10 @@ input {
   border-radius: 4px;
   transition: background-color 0.2s;
 }
-
+#load:hover {
+  background-color: #34944630;
+  color: #2e8b57; 
+}
 #share{
   margin: 12px 0;
   width: 35px;
@@ -294,4 +307,25 @@ input {
   cursor: pointer;
   border-radius: 4px;
   transition: background-color 0.2s;
+}
+
+#share:hover {
+  background-color: #34944630;
+  color: #2e8b57; 
+}
+
+#new-project{
+  margin: 12px 0;
+  width: 78px;
+  padding: 8px;
+  border: none;
+  background-color: #4c816018;
+  color: rgb(52, 148, 70);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+#new-project:hover {
+  background-color: #34944630;
+  color: #2e8b57; 
 }
