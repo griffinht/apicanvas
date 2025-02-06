@@ -43,6 +43,7 @@ export default function App() {
   const [autoSyncRight, setAutoSyncRight] = useState(() => 
     localStorage.getItem('autoSyncRight') === 'true'
   );
+  const [syncError, setSyncError] = useState<string | null>(null);
 
   useEffect(() => {
     localStorage.setItem('direction', direction);
@@ -126,16 +127,6 @@ export default function App() {
     console.log('Saved API to editor');
   };
 
-  useEffect(() => {
-    if (!rfInstance) return;
-    
-    const now = Date.now();
-    if (now - lastSaveTime < SAVE_DELAY) return;
-    
-    saveToEditor();
-    setLastSaveTime(now);
-  }, [nodes, edges, title, version]);
-
   const loadFromEditor = () => {
     const value = (window as any).editor?.getValue();
     if (!value) return;
@@ -144,6 +135,7 @@ export default function App() {
       setApi(parsedApi);
       console.log('Loaded API from editor');
     } catch (error) {
+      alert(error)
       console.error('Error parsing JSON:', error);
     }
   };
@@ -157,6 +149,7 @@ export default function App() {
     
     saveToEditor();
     setLastSaveTime(now);
+    console.log('autoload right to graph from editor')
   }, [nodes, edges, title, version]);
 
   // Auto-sync right (editor to graph) with debounce
@@ -170,7 +163,9 @@ export default function App() {
     try {
       setApi(JSON.parse(value));
       setLastSaveTime(now);
+      setSyncError(null);
     } catch (error) {
+      setSyncError(error + "");
       console.error('Error parsing JSON:', error);
     }
   };
@@ -199,6 +194,8 @@ export default function App() {
           autoSyncRight={autoSyncRight}
           onAutoSyncLeftChange={setAutoSyncLeft}
           onAutoSyncRightChange={setAutoSyncRight}
+          flowInstance={rfInstance}
+          syncError={syncError}
         />
         <div style={{ width: `${100 - splitPosition}%`, height: '95%' }}>
           <ApiInfoBar title={title} setTitle={setTitle} version={version} setVersion={setVersion} />

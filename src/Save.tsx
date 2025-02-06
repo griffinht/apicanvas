@@ -5,7 +5,40 @@ export const getPaths = (rfInstance: ReactFlowInstance) => {
   const flowData = rfInstance.toObject();
   const paths: Record<string, any> = {};
 
-  // First, find all method nodes (they're our endpoints)
+  // Find all path nodes
+  const pathNodes = flowData.nodes.filter(node => {
+    // @ts-ignore
+    const props = node.data.label.props;
+    return props && 'segment' in props;
+  });
+
+  // Process each path node
+  pathNodes.forEach(pathNode => {
+    const pathSegments: string[] = [];
+    let currentNodeId = pathNode.id;
+
+    // Traverse up the tree to build the full path
+    while (true) {
+      // @ts-ignore
+      const segment = flowData.nodes.find(n => n.id === currentNodeId)?.data.label.props.segment;
+      if (!segment) break;
+      
+      pathSegments.unshift(segment);
+      
+      const parentEdge = flowData.edges.find(edge => edge.target === currentNodeId);
+      if (!parentEdge) break;
+      
+      currentNodeId = parentEdge.source;
+    }
+
+    // Add the path to paths object, even if it has no methods
+    const fullPath = '/' + pathSegments.join('/');
+    if (!paths[fullPath]) {
+      paths[fullPath] = {};
+    }
+  });
+
+  // Then process method nodes as before
   const methodNodes = flowData.nodes.filter(node => {
     // @ts-ignore
     const props = node.data.label.props;

@@ -1,6 +1,7 @@
 import { ReactFlowInstance, Node, Edge } from '@xyflow/react';
 import { useState } from 'react';
 import { editResponseDescription } from './Edit';
+import { deleteResponseNode } from './Delete';
 
 export interface ResponseNodeProps {
   statusCode: string;
@@ -147,29 +148,55 @@ export function ResponseNode({ statusCode, description, schema, contentType, nod
             }}>
               {statusCode}
             </span>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                editResponseCode(nodeId, rfInstance);
-              }}
-              style={{
-                border: 'none',
-                background: 'none',
-                cursor: 'pointer',
-                padding: '2px 4px',
-                fontSize: '0.9em',
-                opacity: 0.6,
-                transition: 'opacity 0.2s',
-                display: 'flex',
-                alignItems: 'center',
-                position: 'absolute',
-                right: '0',
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
-              onMouseLeave={(e) => e.currentTarget.style.opacity = '0.6'}
-            >
-              ✏️
-            </button>
+            <div style={{
+              position: 'absolute',
+              right: '0',
+              display: 'flex',
+              gap: '4px'
+            }}>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  editResponseCode(nodeId, rfInstance);
+                }}
+                style={{
+                  border: 'none',
+                  background: 'none',
+                  cursor: 'pointer',
+                  padding: '2px 4px',
+                  fontSize: '0.9em',
+                  opacity: 0.6,
+                  transition: 'opacity 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = '0.6'}
+              >
+                ✏️
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteResponseNode(nodeId, rfInstance, 'TB');
+                }}
+                style={{
+                  border: 'none',
+                  background: 'none',
+                  cursor: 'pointer',
+                  padding: '2px 4px',
+                  fontSize: '0.9em',
+                  opacity: 0.6,
+                  transition: 'opacity 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = '0.6'}
+              >
+                🗑️
+              </button>
+            </div>
           </div>
           <div style={{
             fontSize: '0.9em',

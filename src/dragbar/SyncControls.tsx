@@ -5,6 +5,7 @@ interface SyncControlsProps {
   onAutoSyncRightChange: (value: boolean) => void;
   onSaveToEditor: () => void;
   onLoadFromEditor: () => void;
+  syncError?: string | null;
 }
 
 export function SyncControls({
@@ -13,21 +14,51 @@ export function SyncControls({
   onAutoSyncLeftChange,
   onAutoSyncRightChange,
   onSaveToEditor,
-  onLoadFromEditor
+  syncError
 }: SyncControlsProps) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <label className="checkbox-container tooltip" data-tooltip="Enable auto-sync from diagram to editor">
-        <input
+   <label className="checkbox-container tooltip" data-tooltip="Enable auto-sync from diagram to editor">
+   <input
           type="checkbox"
           checked={autoSyncLeft}
           onChange={(e) => {
             e.stopPropagation();
+            if (e.target.checked && autoSyncRight) {
+              alert('warning both auto sync directions are turned on. this might be buggy.');
+            }
             onAutoSyncLeftChange(e.target.checked);
           }}
         /> 
-      </label>
-      <button
+  </label>
+
+  {syncError && (
+        <button
+          onClick={() => alert(syncError)}
+          style={{
+            border: 'none',
+            background: 'none',
+            cursor: 'pointer',
+            color: '#DC2626',
+            fontSize: '16px',
+            padding: '4px',
+            margin: '4px 0'
+          }}
+        >
+          ⚠️
+        </button>
+      )}
+      
+  <label style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        fontSize: '12px',
+        margin: '4px 0'
+      }}>
+        
+  </label>
+      
+  <button
       id="sync-button"
       className="tooltip"
       data-tooltip="Manually sync the diagram to the editor"
@@ -49,7 +80,7 @@ export function SyncControls({
         <polyline points="15 18 9 12 15 6"></polyline>
       </svg>
       </button>
-   
+
   <button
     id="sync-button"
     className="tooltip"
@@ -59,6 +90,7 @@ export function SyncControls({
       onSaveToEditor();
     }}
   >
+
     <svg
       width="24" 
       height="24" 
@@ -79,10 +111,13 @@ export function SyncControls({
       checked={autoSyncRight}
       onChange={(e) => {
         e.stopPropagation();
+        if (e.target.checked && autoSyncLeft) {
+          alert('Warning: Both auto-sync directions are now enabled. This may cause conflicts.');
+        }
         onAutoSyncRightChange(e.target.checked);
       }}
     />
   </label>
     </div>
   );
-} 
+}

@@ -144,19 +144,19 @@ export function PathNode({ segment, nodeId, rfInstance, direction }: PathNodePro
           onClick={() => changeTitle(nodeId, rfInstance, direction)}
           style={{ fontSize: '0.9em' }}
         >
-          change title
+          edit title
         </button>
         <button 
           onClick={() => addMethodNode(nodeId, rfInstance, direction)}
           style={{ fontSize: '0.9em' }}
         >
-          + GET
+          add response
         </button>
         <button 
           onClick={() => addPathNode(nodeId, rfInstance, direction)}
           style={{ fontSize: '0.9em' }}
         >
-          + endpoint
+          add endpoint
         </button>
         <button 
           onClick={() => deletePathNode(nodeId, rfInstance, direction)}
