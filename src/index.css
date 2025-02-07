@@ -329,3 +329,12 @@ input {
   background-color: #34944630;
   color: #2e8b57; 
 }
+
+
+#delete-path-node{
+  background-color: red;
+}
+
+#delete-method-node{
+  background-color: red;
+}
