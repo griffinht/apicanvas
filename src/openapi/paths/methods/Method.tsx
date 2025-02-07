@@ -3,6 +3,8 @@ import { deleteMethodNode } from './Delete';
 import { editMethod } from './Edit';
 import { createResponseNode } from './response/Response';
 import { getLayoutedElements } from '../../../Layout';
+import { Trash2} from 'lucide-react';
+
 
 export interface MethodNodeProps {
   method: string;
@@ -30,7 +32,9 @@ export function getMethodNodeStyle(method: string) {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: '4px',
+    borderRadius: '50%',
+    width: '50px',
+    height: '50px',
   };
 }
 
@@ -69,11 +73,14 @@ export function createMethodNode(
 export function MethodNode({ method, nodeId, rfInstance, direction }: MethodNodeProps) {
   return (
     <div style={{
-      display: 'flex',
+      // display: 'flex',
       alignItems: 'center',
-      position: 'relative',
-      width: '100%',
-      height: '100%',
+      // position: 'relative',
+      // width: '100%',
+      // height: '100%',
+
+      width: '25px',
+      height: '20px',
     }}
     onMouseEnter={e => {
       const menu = e.currentTarget.querySelector('.hover-menu') as HTMLElement;
@@ -153,13 +160,13 @@ export function MethodNode({ method, nodeId, rfInstance, direction }: MethodNode
           }}
           style={{ fontSize: '0.9em' }}
         >
-          + response
+          Add response
         </button>
         <button 
           onClick={() => deleteMethodNode(nodeId, rfInstance, direction)}
-          style={{ fontSize: '0.9em' }}
+          id="delete-method-node"
         >
-          X
+          <Trash2 size={16} />
         </button>
       </div>
     </div>

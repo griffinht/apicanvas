@@ -90,10 +90,14 @@ export function DragBar({
         alignItems: 'center'
       }}>
         <NewProject />
-        <Save />
-        <Export flowInstance={flowInstance} />
-        <Load />
-        <Share />
+        <div style={{ display: 'flex', gap: '5px' }}>
+          <Save />
+          <Export flowInstance={flowInstance} />
+        </div>
+        <div style={{ display: 'flex', gap: '5px', marginTop: '10px' }}>
+          <Load />
+          <Share />
+        </div>
         <TrySample />
       </div>
 

@@ -1,12 +1,340 @@
+/* Global Styles */
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --primary-color: #007bff;
+  --primary-hover: #0056b3;
+  --secondary-color: #6c757d;
+  --background-color: #f8f9fa;
+  --text-color: #333;
+  --border-radius: 6px;
+  --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: "Inter", sans-serif;
 }
 
-html,
-body,
-#root {
-  height: 100%;
+/* Reset */
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Layout */
+body, html, #root {
+  height: 100%;
+  width: 100%;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Main App Container */
+.app-container {
+  display: flex;
+  width: 95%;
+  max-width: 1400px;
+  height: 90vh;
+  border-radius: var(--border-radius);
+  background: white;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+/* Editor & Graph Panels */
+.editor-panel, .graph-panel {
+  flex: 1;
+  height: 100%;
+  padding: 16px;
+  overflow: auto;
+}
+
+.editor-panel {
+  background: #ffffff;
+  border-right: 1px solid #ddd;
+}
+
+.graph-panel {
+  background: #f1f3f5;
+}
+
+/* Buttons */
+button {
+  background-color: #6BA539;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: var(--border-radius);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+}
+
+button:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Button Container */
+.button-group {
+  display: flex;
+  /* flex-direction: column; */
+  gap: 5px;
+  margin-top: 10px;
+}
+
+/* Input Fields */
+input {
+  margin: 10px;
+  /* width: 100%; */
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: var(--border-radius);
+  font-size: 14px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: var(--primary-color);
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border-top-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+}
+
+#sync-button {
+  margin-top: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background-color: #6BA539; /* Professional blue */
+  color: white;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s, transform 0.2s;
+}
+
+#sync-button:hover {
+  background-color: #A3D977;
+}
+
+#sync-button:active {
+  transform: scale(0.9);
+}
+
+
+
+/*****/
+
+/* Flex container for aligning items in a row */
+.sync-container {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between elements */
+}
+
+/* Styling for the button */
+#sync-button {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background-color: #6BA539;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s, transform 0.2s;
+}
+
+#sync-button:hover {
+  background-color: #A3D977;
+}
+
+#sync-button:active {
+  transform: scale(0.9);
+}
+
+/* Checkbox container */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  cursor: pointer;
+  gap: 6px;
+}
+
+/* Hide default checkbox */
+.checkbox-container input {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #6BA539;
+  border-radius: 4px;
+  position: relative;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+/* Checked state */
+.checkbox-container input:checked {
+  background-color: #6BA539;
+  border-color: #6BA539;
+}
+
+/* Custom checkmark */
+.checkbox-container input:checked::after {
+  content: '✔';
+  font-size: 12px;
+  color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Hover and focus effects */
+.checkbox-container input:hover,
+.checkbox-container input:focus {
+  border-color: #A3D977;
+}
+
+/* Tooltip styling */
+.tooltip {
+  position: relative;
+}
+
+.tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  font-size: 10px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  bottom: 150%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s;
+}
+
+.tooltip:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+#try-sample{
+  margin: 12px 0;
+  width: 70px;
+  padding: 8px;
+  border: none;
+  background-color: #4c816018;
+  color: rgb(52, 148, 70);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+#try-sample:hover {
+  background-color: #34944630;
+  color: #2e8b57; 
+}
+#save{
+  margin: 12px 0;
+  width: 35px;
+  padding: 8px;
+  border: none;
+  background-color: #4c816018;
+  color: rgb(52, 148, 70);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+#save:hover {
+  background-color: #34944630;
+  color: #2e8b57; 
+}
+#download{
+  margin: 12px 0;
+  width: 35px;
+  padding: 8px;
+  border: none;
+  background-color: #4c816018;
+  color: rgb(52, 148, 70);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+#download:hover {
+  background-color: #34944630;
+  color: #2e8b57; 
+}
+#load{
+  margin: 12px 0;
+  width: 35px;
+  padding: 8px;
+  border: none;
+  background-color: #4c816018;
+  color: rgb(52, 148, 70);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+#load:hover {
+  background-color: #34944630;
+  color: #2e8b57; 
+}
+#share{
+  margin: 12px 0;
+  width: 35px;
+  padding: 8px;
+  border: none;
+  background-color: #4c816018;
+  color: rgb(52, 148, 70);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+#share:hover {
+  background-color: #34944630;
+  color: #2e8b57; 
+}
+
+#new-project{
+  margin: 12px 0;
+  width: 78px;
+  padding: 8px;
+  border: none;
+  background-color: #4c816018;
+  color: rgb(52, 148, 70);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+#new-project:hover {
+  background-color: #34944630;
+  color: #2e8b57; 
+}
+
+
+#delete-path-node{
+  background-color: red;
+}
+
+#delete-method-node{
+  background-color: red;
 }

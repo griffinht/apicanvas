@@ -1,58 +1,53 @@
+import { Save as SaveIcon } from "lucide-react";
+
 export function Save() {
   const handleSave = async () => {
-    const editorContent = (window as any).editor?.getValue();
+    const editorContent = (window as unknown as { editor?: { getValue: () => string } }).editor?.getValue();
     if (!editorContent) {
-      alert('No content to save');
+      alert("No content to save");
       return;
     }
 
     try {
-      // Type check for File System Access API support
-      if (!('showSaveFilePicker' in window)) {
-        throw new Error('File System Access API not supported');
+      if (!("showSaveFilePicker" in window)) {
+        throw new Error("File System Access API not supported");
       }
 
-      // Create a handle to save the file
       const handle = await (window as any).showSaveFilePicker({
-        suggestedName: 'openapi-spec.json',
-        types: [{
-          description: 'JSON Files',
-          accept: {
-            'application/json': ['.json'],
+        suggestedName: "openapi-spec.json",
+        types: [
+          {
+            description: "JSON Files",
+            accept: { "application/json": [".json"] },
           },
-        }],
+        ],
       });
 
-      // Create a FileSystemWritableFileStream to write to
       const writable = await handle.createWritable();
-
-      // Write the contents of the file to the stream
       await writable.write(editorContent);
-
-      // Close the file and write the contents to disk
       await writable.close();
     } catch (error) {
-      // User cancelled or API not supported
-      if (error instanceof Error && error.name !== 'AbortError') {
-        console.error('Error saving file:', error);
-        if (error.message === 'File System Access API not supported') {
-          alert('Your browser doesn\'t support saving files. Try using the download button instead.');
+      if (error instanceof Error && error.name !== "AbortError") {
+        console.error("Error saving file:", error);
+        if (error.message === "File System Access API not supported") {
+          alert("Your browser doesn't support saving files. Try using the download button instead.");
         } else {
-          alert('Failed to save file');
+          alert("Failed to save file");
         }
       }
     }
   };
 
   return (
-    <button
+    <button 
       onClick={(e) => {
         e.stopPropagation();
         handleSave();
       }}
-      style={{ margin: '12px 0', width: '70px' }}
+      id="save"
+      aria-label="Save OpenAPI Specification"  data-tooltip="Save OpenAPI Specification"
     >
-      save
+      <SaveIcon size={18} />
     </button>
   );
-} 
+}

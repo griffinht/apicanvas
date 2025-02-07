@@ -15,13 +15,14 @@ export function TrySample() {
 
   return (
     <button
+
+    id = "try-sample"
       onClick={(e) => {
         e.stopPropagation();
         handleTrySample();
       }}
-      style={{ margin: '12px 0', width: '70px' }}
     >
-      try sample
+      Try sample
     </button>
   );
 } 

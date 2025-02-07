@@ -172,14 +172,18 @@ export default function App() {
 
   return (
     <ReactFlowProvider>
-      <div style={{ display: 'flex', width: '100vw', height: '100vh' }}>
+
+        <div style={{ display: 'flex', width: '100vw', height: '100vh' }}>        
         <div style={{ width: `${splitPosition}%`, height: '100%' }}>
-          <CustomEditor 
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '4px', backgroundColor: '#6BA539', zIndex: 9999 }}></div>
+        <div style={{ height: '99%', paddingTop: '0.5rem', overflow: 'auto' }}>
+        <CustomEditor 
             onMount={(editor) => {
               (window as any).editor = editor;
             }}
             onChange={handleEditorChange}
           />
+        </div>         
         </div>
         <DragBar
           onLoadFromEditor={loadFromEditor}
@@ -193,7 +197,7 @@ export default function App() {
           flowInstance={rfInstance}
           syncError={syncError}
         />
-        <div style={{ width: `${100 - splitPosition}%`, height: '100%' }}>
+        <div style={{ width: `${100 - splitPosition}%`, height: '95%' }}>
           <ApiInfoBar title={title} setTitle={setTitle} version={version} setVersion={setVersion} />
           <ReactFlow
             nodes={nodes}
@@ -217,6 +221,8 @@ export default function App() {
             </Panel>
           </ReactFlow>
         </div>
+        <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', height: '4px', backgroundColor: '#6BA539', zIndex: 9999 }}></div>
+
       </div>
     </ReactFlowProvider>
   );

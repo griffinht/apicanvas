@@ -5,6 +5,8 @@ import { editPathSegment } from './Edit';
 import { deletePathNode } from './Delete';
 import { collapsePathNode } from './Collapse';
 import { ReactFlowInstance, Node } from '@xyflow/react';
+import { Trash2, SquareMinus } from 'lucide-react';
+import './PathNode.css'; // Import the CSS file
 
 export function changeTitle(nodeId: string, rfInstance: ReactFlowInstance, direction: 'TB' | 'LR') {
   const nodes = rfInstance.getNodes();
@@ -30,7 +32,7 @@ export function changeTitle(nodeId: string, rfInstance: ReactFlowInstance, direc
             direction={direction} 
           />
         },
-        style: getPathNodeStyle(newSegment)
+        className: getPathNodeStyle(newSegment), // Use className instead of style
       };
     }
     return n;
@@ -46,18 +48,7 @@ export interface PathNodeProps {
 
 export function getPathNodeStyle(segment: string) {
   const isParameter = (segment: string) => segment.match(/^\{.*\}$/);
-  
-  return {
-    background: isParameter(segment) ? '#2d3748' : '#fff',
-    border: '1px solid #2d3748',
-    width: '24px',
-    height: '24px',
-    padding: 0,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: '2px',
-  };
+  return isParameter(segment) ? 'path-node-parameter' : 'path-node-default';
 }
 
 export function createPathNode(
@@ -80,21 +71,14 @@ export function createPathNode(
     type: 'default',
     position: { x: 0, y: 0 },
     hidden: isHidden,
-    style: getPathNodeStyle(segment)
+    className: getPathNodeStyle(segment), // Use className instead of style
   };
 }
 
 export function PathNode({ segment, nodeId, rfInstance, direction }: PathNodeProps) {
   return (
     <div 
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        position: 'relative',
-        width: '100%',
-        height: '100%',
-        justifyContent: 'center',
-      }}
+      className="path-node-container"
       onMouseEnter={e => {
         const menu = e.currentTarget.querySelector('.hover-menu') as HTMLElement;
         if (menu) menu.style.opacity = '1';
@@ -104,73 +88,39 @@ export function PathNode({ segment, nodeId, rfInstance, direction }: PathNodePro
         if (menu) menu.style.opacity = '0';
       }}
     >
-      <div style={{
-        position: 'absolute',
-        right: '100%',
-        top: '100%',
-        transform: 'translate(0, -50%)',
-        whiteSpace: 'nowrap',
-        fontFamily: 'monospace',
-        fontSize: '1.1em',
-        color: '#2d3748',
-        pointerEvents: 'none',
-        zIndex: 20,
-        marginRight: '8px',
-        marginTop: '4px',
-      }}>
+      <div className="path-node-segment">
         {segment}
       </div>
 
       <div 
         className="hover-menu"
-        style={{
-          backgroundColor: '#fff',
-          padding: '4px 8px',
-          borderRadius: '4px',
-          border: '1px solid #ddd',
-          display: 'flex',
-          gap: '4px',
-          opacity: 0,
-          transition: 'opacity 0.2s ease',
-          position: 'absolute',
-          left: '100%',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          marginLeft: '8px',
-          zIndex: 10,
-        }}
       >
         <button 
           onClick={() => changeTitle(nodeId, rfInstance, direction)}
-          style={{ fontSize: '0.9em' }}
         >
-          edit title
+          Edit Label
         </button>
         <button 
           onClick={() => addMethodNode(nodeId, rfInstance, direction)}
-          style={{ fontSize: '0.9em' }}
         >
-          add response
+          Attach operation
         </button>
         <button 
           onClick={() => addPathNode(nodeId, rfInstance, direction)}
-          style={{ fontSize: '0.9em' }}
         >
-          add endpoint
+          Extend path
         </button>
-        <button 
+        <button id="delete-path-node"
           onClick={() => deletePathNode(nodeId, rfInstance, direction)}
-          style={{ fontSize: '0.9em' }}
         >
-          X
+          <Trash2 size={16} />
         </button>
-        <button 
+        <button id="collapse-path-node"
           onClick={() => collapsePathNode(nodeId, rfInstance, direction)}
-          style={{ fontSize: '0.9em' }}
         >
-          -
+          <SquareMinus size={16} />
         </button>
       </div>
     </div>
   );
-} 
+}
