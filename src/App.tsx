@@ -17,6 +17,7 @@ import {
 import { CustomEditor } from './editor/CustomEditor.tsx';
 import { DragBar } from './dragbar/DragBar.tsx';
 import { Schemas, createSchemaNode } from './tree/openapi/components/Schemas';
+import { getSchemas, createSchemaNodes } from './tree/openapi/components/SchemaManager';
 
 import '@xyflow/react/dist/style.css';
 
@@ -86,21 +87,12 @@ export default function App() {
       throw new Error('rfInstance is not set');
     }
 
-    // Get schemas from schema nodes
-    const schemas: { [key: string]: any } = {};
-    rfInstance.getNodes().forEach(node => {
-      if (node.type === 'schemaNode' && node.data.schema) {
-        const schemaName = (node.data.schema as { title?: string }).title || `Schema_${node.id}`;
-        schemas[schemaName] = node.data.schema;
-      }
-    });
-
     return {
       openapi: "3.0.0",
       info: { title, version },
       paths: getPaths(rfInstance),
       components: {
-        schemas
+        schemas: getSchemas(rfInstance.getNodes())
       }
     };
   };
@@ -131,29 +123,11 @@ export default function App() {
         throw new Error('missing paths');
       }
 
-      // Create schema nodes
-      const schemaNodes: Node[] = [];
-      const schemaEdges: Edge[] = [];
-      if (newApi.components?.schemas) {
-        Object.entries(newApi.components.schemas).forEach(([name, schema]) => {
-          const nodeId = `schema-${Date.now()}-${name}`;
-          const schemaWithTitle: Schema = {
-            ...(schema as Schema),
-            title: name
-          };
-          const { nodes, edges } = createSchemaNode(
-            schemaWithTitle,
-            nodeId,
-            rfInstance
-          );
-          schemaNodes.push(...(nodes as Node[]));
-          schemaEdges.push(...edges);
-        });
-      }
+      const { nodes: pathNodes, edges: pathEdges } = setPaths(newApi.paths, direction, rfInstance);
+      const { nodes: schemaNodes, edges: schemaEdges } = createSchemaNodes(newApi.components?.schemas || {}, rfInstance);
 
-      const { nodes, edges } = setPaths(newApi.paths, direction, rfInstance);
-      setNodes([...nodes, ...schemaNodes] as Node[]);
-      setEdges([...edges, ...schemaEdges]);
+      setNodes([...pathNodes, ...schemaNodes]);
+      setEdges([...pathEdges, ...schemaEdges]);
     } catch (error) {
       console.error('Error setting API:', error);
       if (error instanceof Error) {
