@@ -157,8 +157,7 @@ const PropertyEditor: React.FC<{
 
 export const SchemaEditor: React.FC<SchemaEditorProps> = ({
   schema,
-  onSchemaChange,
-  rfInstance
+  onSchemaChange
 }) => {
   const [newPropertyName, setNewPropertyName] = useState('');
 
@@ -211,7 +210,7 @@ export const SchemaEditor: React.FC<SchemaEditorProps> = ({
     onSchemaChange({
       ...schema,
       xml: {
-        ...schema.xml,
+        name: schema.xml?.name || '',
         wrapped: e.target.checked
       }
     });

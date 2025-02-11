@@ -6,7 +6,6 @@ import './SchemaNode.css';
 
 export interface SchemasProps {
   rfInstance: ReactFlowInstance;
-  direction: 'TB' | 'LR';
 }
 
 function SchemaNodeContent({
@@ -133,8 +132,7 @@ export function createSchemaNode(
 
 export function addSchemaNode(
   parentId: string,
-  rfInstance: ReactFlowInstance,
-  direction: 'TB' | 'LR'
+  rfInstance: ReactFlowInstance
 ) {
   const newSchema = {
     type: 'object',
@@ -162,16 +160,7 @@ export function addSchemaNode(
   rfInstance.setEdges(edges => [...edges, ...newEdges, newEdge]);
 }
 
-export function getSchemaNodeStyle(schema: any) {
-  return {
-    background: '#ffffff',
-    border: '1px solid #e2e8f0',
-    borderRadius: '8px',
-    padding: '16px'
-  };
-}
-
-export function Schemas({ rfInstance, direction }: SchemasProps) {
+export function Schemas({ rfInstance }: SchemasProps) {
   const handleAddSchema = () => {
     const newSchema = {
       type: 'object',
