@@ -1,8 +1,8 @@
 import { ReactFlowInstance } from '@xyflow/react';
-import { getLayoutedElements } from './Layout';
-import { createMethodNode } from './openapi/paths/methods/Method';
-import { createPathNode } from './openapi/paths/Path';
-import { createResponseNode } from './openapi/paths/methods/response/Response';
+import { getLayoutedElements } from './tree/Layout';
+import { createMethodNode } from './tree/openapi/paths/methods/Method';
+import { createPathNode } from './tree/openapi/paths/Path';
+import { createResponseNode } from './tree/openapi/paths/methods/response/Response';
 
 export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFlowInstance) => {
   const nodes: any[] = [];

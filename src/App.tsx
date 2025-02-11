@@ -12,15 +12,15 @@ import {
   ConnectionLineType,
 } from '@xyflow/react';
 
-import { CustomEditor } from './CustomEditor.tsx';
+import { CustomEditor } from './editor/CustomEditor.tsx';
 import { DragBar } from './dragbar/DragBar.tsx';
 
 import '@xyflow/react/dist/style.css';
 
 import { useState, useCallback, useEffect } from 'react';
-import { initialNodes, nodeTypes } from './nodes';
-import { edgeTypes, initialEdges } from '.';
-import { ApiInfoBar } from './TreeControls.tsx';
+import { initialNodes, nodeTypes } from './tree/nodes.ts';
+import { edgeTypes, initialEdges } from './tree/index.ts';
+import { ApiInfoBar } from './tree/Controls.tsx';
 import { getPaths } from './Save';
 import { setPaths } from './Load';
 
