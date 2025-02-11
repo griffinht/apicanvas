@@ -10,10 +10,13 @@ import {
   OnConnect,
   ReactFlowInstance,
   ConnectionLineType,
+  Node,
+  Edge
 } from '@xyflow/react';
 
 import { CustomEditor } from './editor/CustomEditor.tsx';
 import { DragBar } from './dragbar/DragBar.tsx';
+import { Schemas, createSchemaNode } from './tree/openapi/components/Schemas';
 
 import '@xyflow/react/dist/style.css';
 
@@ -23,6 +26,13 @@ import { edgeTypes, initialEdges } from './tree/index.ts';
 import { ApiInfoBar } from './tree/Controls.tsx';
 import { getPaths } from './Save';
 import { setPaths } from './Load';
+
+interface Schema {
+  type: string;
+  properties: Record<string, unknown>;
+  title?: string;
+  [key: string]: unknown;
+}
 
 export default function App() {
   const [title, setTitle] = useState('My New API');
@@ -75,13 +85,25 @@ export default function App() {
     if (!rfInstance) {
       throw new Error('rfInstance is not set');
     }
+
+    // Get schemas from schema nodes
+    const schemas: { [key: string]: any } = {};
+    rfInstance.getNodes().forEach(node => {
+      if (node.type === 'schemaNode' && node.data.schema) {
+        const schemaName = (node.data.schema as { title?: string }).title || `Schema_${node.id}`;
+        schemas[schemaName] = node.data.schema;
+      }
+    });
+
     return {
       openapi: "3.0.0",
       info: { title, version },
-      paths: getPaths(rfInstance)
+      paths: getPaths(rfInstance),
+      components: {
+        schemas
+      }
     };
   };
-
 
   const setApi = (newApi: any) => {
     try {
@@ -91,8 +113,8 @@ export default function App() {
       if (!newApi.openapi) {
         throw new Error('missing openapi version');
       }
-      if (newApi.openapi !== '3.0.0') {
-        throw new Error('unsupported openapi version ' + newApi.openapi + ', only 3.0.0 is supported');
+      if (!newApi.openapi.startsWith('3.')) {
+        throw new Error('unsupported openapi version ' + newApi.openapi + ', only OpenAPI 3.x.x is supported');
       }
       if (!newApi.info) {
         throw new Error('missing info');
@@ -108,9 +130,30 @@ export default function App() {
       if (!newApi.paths) {
         throw new Error('missing paths');
       }
+
+      // Create schema nodes
+      const schemaNodes: Node[] = [];
+      const schemaEdges: Edge[] = [];
+      if (newApi.components?.schemas) {
+        Object.entries(newApi.components.schemas).forEach(([name, schema]) => {
+          const nodeId = `schema-${Date.now()}-${name}`;
+          const schemaWithTitle: Schema = {
+            ...(schema as Schema),
+            title: name
+          };
+          const { nodes, edges } = createSchemaNode(
+            schemaWithTitle,
+            nodeId,
+            rfInstance
+          );
+          schemaNodes.push(...(nodes as Node[]));
+          schemaEdges.push(...edges);
+        });
+      }
+
       const { nodes, edges } = setPaths(newApi.paths, direction, rfInstance);
-      setNodes(nodes);
-      setEdges(edges);
+      setNodes([...nodes, ...schemaNodes] as Node[]);
+      setEdges([...edges, ...schemaEdges]);
     } catch (error) {
       console.error('Error setting API:', error);
       if (error instanceof Error) {
@@ -171,18 +214,17 @@ export default function App() {
 
   return (
     <ReactFlowProvider>
-
-        <div style={{ display: 'flex', width: '100vw', height: '100vh' }}>        
+      <div style={{ display: 'flex', width: '100vw', height: '100vh' }}>        
         <div style={{ width: `${splitPosition}%`, height: '100%' }}>
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '4px', backgroundColor: '#6BA539', zIndex: 9999 }}></div>
-        <div style={{ height: '99%', paddingTop: '0.5rem', overflow: 'auto' }}>
-        <CustomEditor 
-            onMount={(editor) => {
-              (window as any).editor = editor;
-            }}
-            onChange={handleEditorChange}
-          />
-        </div>         
+          <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '4px', backgroundColor: '#6BA539', zIndex: 9999 }}></div>
+          <div style={{ height: '99%', paddingTop: '0.5rem', overflow: 'auto' }}>
+            <CustomEditor 
+              onMount={(editor) => {
+                (window as any).editor = editor;
+              }}
+              onChange={handleEditorChange}
+            />
+          </div>         
         </div>
         <DragBar
           onLoadFromEditor={loadFromEditor}
@@ -220,10 +262,10 @@ export default function App() {
             <Background />
             <MiniMap />
             <Controls />
+            {rfInstance && <Schemas rfInstance={rfInstance} direction={direction} />}
           </ReactFlow>
         </div>
         <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', height: '4px', backgroundColor: '#6BA539', zIndex: 9999 }}></div>
-
       </div>
     </ReactFlowProvider>
   );
