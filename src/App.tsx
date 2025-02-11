@@ -3,7 +3,6 @@ import {
   Background,
   Controls,
   MiniMap,
-  Panel,
   ReactFlow,
   useNodesState,
   useEdgesState,
@@ -21,7 +20,7 @@ import '@xyflow/react/dist/style.css';
 import { useState, useCallback, useEffect } from 'react';
 import { initialNodes, nodeTypes } from './nodes';
 import { edgeTypes, initialEdges } from '.';
-import { ApiInfoBar } from './ApiInfoBar';
+import { ApiInfoBar } from './TreeControls.tsx';
 import { getPaths } from './Save';
 import { setPaths } from './Load';
 
@@ -198,7 +197,14 @@ export default function App() {
           syncError={syncError}
         />
         <div style={{ width: `${100 - splitPosition}%`, height: '95%' }}>
-          <ApiInfoBar title={title} setTitle={setTitle} version={version} setVersion={setVersion} />
+          <ApiInfoBar 
+            title={title} 
+            setTitle={setTitle} 
+            version={version} 
+            setVersion={setVersion}
+            direction={direction}
+            setDirection={setDirection}
+          />
           <ReactFlow
             nodes={nodes}
             nodeTypes={nodeTypes}
@@ -214,11 +220,6 @@ export default function App() {
             <Background />
             <MiniMap />
             <Controls />
-            <Panel position="top-left">
-              <button onClick={() => setDirection(direction === 'TB' ? 'LR' : 'TB')}>
-                Toggle layout
-              </button>
-            </Panel>
           </ReactFlow>
         </div>
         <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', height: '4px', backgroundColor: '#6BA539', zIndex: 9999 }}></div>
