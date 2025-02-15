@@ -1,67 +1,35 @@
-import { Editor } from "@monaco-editor/react";
-import { useEffect } from "react";
+import * as monaco from 'monaco-editor';
+import { useMonaco } from '@monaco-editor/react';
+import Editor from '@monaco-editor/react';
+import { dump as yamlDump } from 'js-yaml';
 
 interface CustomEditorProps {
-  onMount?: (editor: any) => void;
+  onMount?: (editor: monaco.editor.IStandaloneCodeEditor) => void;
   onChange?: (value: string | undefined) => void;
-  defaultValue?: string;  
+  defaultValue?: string;
 }
 
 export function CustomEditor({ onMount, onChange, defaultValue }: CustomEditorProps) {
-  const openApiExample = `{
-  "openapi": "3.0.0",
-  "info": {
-    "title": "Example API",
-    "description": "This is a sample API definition in OpenAPI 3.0 format.",
-    "version": "1.0.0"
-  },
-  "paths": {
-    "/users": {
-      "get": {
-        "summary": "Get a list of users",
-        "operationId": "getUsers",
-        "responses": {
-          "200": {
-            "description": "A list of users.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "integer"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}`;
+  const monaco = useMonaco();
 
-  const initialValue = localStorage.getItem("editorContent") || defaultValue || openApiExample;
-
-  useEffect(() => {
-    if ((window as any).editor) {
-      (window as any).editor.setValue(initialValue);
+  const openApiExample = {
+    openapi: "3.0.0",
+    info: {
+      title: "My New API",
+      version: "0.0.1"
+    },
+    paths: {},
+    components: {
+      schemas: {}
     }
-  }, []);
+  };
+
+  const initialValue = yamlDump(openApiExample, { indent: 2 });
 
   return (
-    
     <Editor
       height="100%"
-      defaultLanguage="json"
-      defaultValue={initialValue} 
+      defaultLanguage="yaml"
       onMount={(editor) => {
         (window as any).editor = editor;
         const savedContent = localStorage.getItem("editorContent");

@@ -2,6 +2,7 @@ import { ReactFlowInstance } from '@xyflow/react';
 import { getPaths } from '../../Save';
 import { setPaths } from '../../Load';
 import { getSchemas, createSchemaNodes } from './components/SchemaManager';
+import { dump as yamlDump, load as yamlLoad } from 'js-yaml';
 
 interface ApiInfo {
   title: string;
@@ -81,7 +82,7 @@ export function setApi(
 
 export function saveToEditor(rfInstance: ReactFlowInstance, info: ApiInfo) {
   const api = getApi(rfInstance, info);
-  (window as any).editor?.setValue(JSON.stringify(api, null, 4));
+  (window as any).editor?.setValue(yamlDump(api, { indent: 2 }));
   console.log('Saved API to editor');
 }
 
@@ -99,11 +100,11 @@ export function loadFromEditor(
   if (!value) return;
   
   try {
-    const parsedApi = JSON.parse(value);
+    const parsedApi = yamlLoad(value);
     setApi(parsedApi, rfInstance, direction, callbacks);
     console.log('Loaded API from editor');
   } catch (error) {
-    console.error('Error parsing JSON:', error);
+    console.error('Error parsing YAML:', error);
     throw error;
   }
 } 
