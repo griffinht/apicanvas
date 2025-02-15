@@ -2,6 +2,7 @@ import * as monaco from 'monaco-editor';
 import highlightPath from './highlightPath';
 import Editor from '@monaco-editor/react';
 import { dump as yamlDump } from 'js-yaml';
+import { getPathFromLine } from './graphHighlight';
 
 interface CustomEditorProps {
   onMount?: (editor: monaco.editor.IStandaloneCodeEditor) => void;
@@ -43,6 +44,18 @@ export function CustomEditor({ onMount, onChange, defaultValue }: CustomEditorPr
         onMount={(editor) => {
           (window as any).editor = editor;
           (window as any).highlightPath = (path: string) => highlightPath(editor, path);
+          
+          // Add cursor position change listener
+          editor.onDidChangeCursorPosition((e) => {
+            const line = editor.getModel()?.getLineContent(e.position.lineNumber);
+            if (line) {
+              const path = getPathFromLine(line, e.position.lineNumber, editor);
+              if (path) {
+                console.log('Current path:', path);
+              }
+            }
+          });
+
           const savedContent = localStorage.getItem("editorContent");
           if (savedContent) {
             editor.setValue(savedContent);
