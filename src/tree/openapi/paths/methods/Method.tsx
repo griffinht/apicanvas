@@ -163,6 +163,9 @@ export function MethodNode({ method, nodeId, rfInstance, direction }: MethodNode
           Add response
         </button>
         <button 
+            onClick={() => alert('expand')}
+          >toggle expand/collapse</button>
+        <button 
           onClick={() => deleteMethodNode(nodeId, rfInstance, direction)}
           id="delete-method-node"
         >
