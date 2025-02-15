@@ -98,7 +98,14 @@ export const getPaths = (rfInstance: ReactFlowInstance) => {
         ...(schema && contentType && {
           content: {
             [contentType]: {
-              schema: schema
+              schema: typeof schema === 'object' ? 
+                (schema.type === 'array' ? 
+                  {
+                    type: 'array',
+                    items: schema.items.$ref ? { $ref: schema.items.$ref } : schema.items
+                  } :
+                  schema.$ref ? { $ref: schema.$ref } : schema
+                ) : schema
             }
           }
         })
