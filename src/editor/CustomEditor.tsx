@@ -1,5 +1,5 @@
 import * as monaco from 'monaco-editor';
-import { useMonaco } from '@monaco-editor/react';
+import highlightPath from './highlightPath';
 import Editor from '@monaco-editor/react';
 import { dump as yamlDump } from 'js-yaml';
 
@@ -10,8 +10,6 @@ interface CustomEditorProps {
 }
 
 export function CustomEditor({ onMount, onChange, defaultValue }: CustomEditorProps) {
-  const monaco = useMonaco();
-
   const openApiExample = {
     openapi: "3.0.0",
     info: {
@@ -26,25 +24,39 @@ export function CustomEditor({ onMount, onChange, defaultValue }: CustomEditorPr
 
   const initialValue = yamlDump(openApiExample, { indent: 2 });
 
+  
   return (
-    <Editor
-      height="100%"
-      defaultLanguage="yaml"
-      onMount={(editor) => {
-        (window as any).editor = editor;
-        const savedContent = localStorage.getItem("editorContent");
-        if (savedContent) {
-          editor.setValue(savedContent);
-        } else {
-          editor.setValue(initialValue);
-        }
-        onMount?.(editor);
-      }}
-      onChange={(value) => {
-        if (!value) return;
-        localStorage.setItem("editorContent", value);
-        onChange?.(value);
-      }}
-    />
+    <>
+      <style>
+        {`
+          .highlighted-line {
+            background-color: rgba(107, 165, 57, 0.2);
+          }
+          .highlighted-text {
+            font-weight: bold;
+          }
+        `}
+      </style>
+      <Editor
+        height="100%"
+        defaultLanguage="yaml"
+        onMount={(editor) => {
+          (window as any).editor = editor;
+          (window as any).highlightPath = (path: string) => highlightPath(editor, path);
+          const savedContent = localStorage.getItem("editorContent");
+          if (savedContent) {
+            editor.setValue(savedContent);
+          } else {
+            editor.setValue(initialValue);
+          }
+          onMount?.(editor);
+        }}
+        onChange={(value) => {
+          if (!value) return;
+          localStorage.setItem("editorContent", value);
+          onChange?.(value);
+        }}
+      />
+    </>
   );
 }

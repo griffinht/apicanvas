@@ -7,6 +7,7 @@ import { collapsePathNode } from './Collapse';
 import { ReactFlowInstance, Node } from '@xyflow/react';
 import { Trash2, SquareMinus } from 'lucide-react';
 import './PathNode.css'; // Import the CSS file
+import highlightPath from './highlight';
 
 export function changeTitle(nodeId: string, rfInstance: ReactFlowInstance, direction: 'TB' | 'LR') {
   const nodes = rfInstance.getNodes();
@@ -82,6 +83,7 @@ export function PathNode({ segment, nodeId, rfInstance, direction }: PathNodePro
       onMouseEnter={e => {
         const menu = e.currentTarget.querySelector('.hover-menu') as HTMLElement;
         if (menu) menu.style.opacity = '1';
+        highlightPath(segment, nodeId, rfInstance);
       }}
       onMouseLeave={e => {
         const menu = e.currentTarget.querySelector('.hover-menu') as HTMLElement;
