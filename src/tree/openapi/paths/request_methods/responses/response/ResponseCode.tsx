@@ -102,7 +102,6 @@ function parseSchema(obj: any): string {
 
 export function ResponseNode({ statusCode, description, schema, contentType, nodeId, rfInstance }: ResponseNodeProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [showSchemaTag, setShowSchemaTag] = useState(false);
 
   const getSchemaTag = (schema: any): string => {
     if (schema?.$ref) {
@@ -112,6 +111,17 @@ export function ResponseNode({ statusCode, description, schema, contentType, nod
       return schema.items.$ref.split('/').pop() || '';
     }
     return '';
+  };
+
+  const handleSchemaHover = (show: boolean) => {
+    const schemaTag = getSchemaTag(schema);
+    if (schemaTag && (window as any).highlightSchemaEditor) {
+      if (show) {
+        (window as any).highlightSchemaEditor(schemaTag);
+      } else {
+        (window as any).highlightSchemaEditor('');
+      }
+    }
   };
 
   return (
@@ -299,28 +309,10 @@ export function ResponseNode({ statusCode, description, schema, contentType, nod
               position: 'relative',
               cursor: 'pointer'
             }}
-            onMouseEnter={() => setShowSchemaTag(true)}
-            onMouseLeave={() => setShowSchemaTag(false)}
+            onMouseEnter={() => handleSchemaHover(true)}
+            onMouseLeave={() => handleSchemaHover(false)}
           >
             {parseSchema(schema)}
-            {showSchemaTag && getSchemaTag(schema) && (
-              <div style={{
-                position: 'absolute',
-                top: '-30px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                backgroundColor: '#2D3748',
-                color: 'white',
-                padding: '4px 8px',
-                borderRadius: '4px',
-                fontSize: '0.8em',
-                whiteSpace: 'nowrap',
-                zIndex: 1000,
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-              }}>
-                {getSchemaTag(schema)}
-              </div>
-            )}
           </div>
         </div>
       )}

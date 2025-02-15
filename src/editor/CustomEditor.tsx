@@ -3,6 +3,7 @@ import highlightPath from './highlightPath';
 import Editor from '@monaco-editor/react';
 import { dump as yamlDump } from 'js-yaml';
 import { getPathFromLine } from './graphHighlight';
+import highlightSchemaEditor from './highlightSchema';
 
 interface CustomEditorProps {
   onMount?: (editor: monaco.editor.IStandaloneCodeEditor) => void;
@@ -44,6 +45,7 @@ export function CustomEditor({ onMount, onChange, defaultValue }: CustomEditorPr
         onMount={(editor) => {
           (window as any).editor = editor;
           (window as any).highlightPath = (path: string) => highlightPath(editor, path);
+          (window as any).highlightSchemaEditor = (schemaName: string) => highlightSchemaEditor(editor, schemaName);
           
           // Add cursor position change listener
           editor.onDidChangeCursorPosition((e) => {
