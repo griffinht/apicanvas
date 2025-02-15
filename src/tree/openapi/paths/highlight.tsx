@@ -1,5 +1,8 @@
 import { ReactFlowInstance } from "@xyflow/react";
 
+// Store the currently highlighted path
+let currentHighlightedPath: string | null = null;
+
 // Function to get the full path for this node
 const getFullPath = (segment: string, nodeId: string, rfInstance: ReactFlowInstance) => {
     const nodes = rfInstance.getNodes();
@@ -22,10 +25,30 @@ const getFullPath = (segment: string, nodeId: string, rfInstance: ReactFlowInsta
     }
 
     return '/' + pathSegments.join('/');
-  };
+};
 
-  const highlightPath = (segment: string, nodeId: string, rfInstance: ReactFlowInstance) => {
-    (window as any).highlightPath(getFullPath(segment, nodeId, rfInstance));
+// Function to clear the current highlight
+export const clearHighlight = () => {
+  if (currentHighlightedPath) {
+    (window as any).clearHighlight?.();
+    currentHighlightedPath = null;
+  }
+};
+
+const highlightPath = (segment: string, nodeId: string, rfInstance: ReactFlowInstance) => {
+  const fullPath = getFullPath(segment, nodeId, rfInstance);
+  
+  // If this path is already highlighted, do nothing
+  if (currentHighlightedPath === fullPath) {
+    return;
   }
 
-  export default highlightPath;
+  // Clear any existing highlight
+  clearHighlight();
+
+  // Set the new highlight
+  currentHighlightedPath = fullPath;
+  (window as any).highlightPath?.(fullPath);
+};
+
+export default highlightPath;

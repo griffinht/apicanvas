@@ -1,12 +1,20 @@
 import * as monaco from 'monaco-editor';
 
+// Store the current decoration IDs
+let currentDecorations: string[] = [];
+
+// Function to clear current highlights
+export const clearHighlight = (editor: monaco.editor.IStandaloneCodeEditor) => {
+  currentDecorations = editor.deltaDecorations(currentDecorations, []);
+};
+
 // Function to highlight a specific path in the editor
 const highlightPath = (editor: monaco.editor.IStandaloneCodeEditor, path: string) => {
     const model = editor.getModel();
     if (!model) return;
 
     // Clear previous decorations
-    editor.deltaDecorations([], []);
+    clearHighlight(editor);
 
     // Find the line containing the path
     const content = model.getValue();
@@ -36,11 +44,11 @@ const highlightPath = (editor: monaco.editor.IStandaloneCodeEditor, path: string
           inlineClassName: 'highlighted-text'
         }
       }];
-      editor.deltaDecorations([], decorations);
+      currentDecorations = editor.deltaDecorations(currentDecorations, decorations);
 
       // Reveal the line
       editor.revealLineInCenter(lineIndex + 1);
     }
-  };
+};
 
-  export default highlightPath;
+export default highlightPath;
