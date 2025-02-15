@@ -1,8 +1,8 @@
 import { ReactFlowInstance } from '@xyflow/react';
 import { getLayoutedElements } from './tree/Layout';
-import { createMethodNode } from './tree/openapi/paths/methods/Method';
+import { createMethodNode } from './tree/openapi/paths/request_methods/RequestMethod';
 import { createPathNode } from './tree/openapi/paths/Path';
-import { createResponseNode } from './tree/openapi/paths/methods/response/Response';
+import { createResponseNode } from './tree/openapi/paths/request_methods/responses/response/ResponseCode';
 
 export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFlowInstance) => {
   const nodes: any[] = [];
@@ -73,7 +73,8 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFl
               rfInstance,
               direction,
               isChildOfCollapsed || isCollapsed,
-              nodeId
+              nodeId,
+              value.summary
             );
             
             nodes.push(...methodNodes);

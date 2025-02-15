@@ -1,5 +1,5 @@
 import { ReactFlowInstance } from '@xyflow/react';
-import { getMethodNodeStyle, MethodNode } from './Method';
+import { getMethodNodeStyle, MethodNode } from './RequestMethod';
 
 export function editMethod(nodeId: string, newMethod: string, rfInstance: ReactFlowInstance, direction: 'TB' | 'LR') {
   rfInstance.setNodes(nodes => nodes.map(node => {

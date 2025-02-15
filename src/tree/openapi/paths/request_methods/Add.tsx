@@ -1,5 +1,5 @@
 import { ReactFlowInstance, Edge } from '@xyflow/react';
-import { createMethodNode } from './Method';
+import { createMethodNode } from './RequestMethod';
 import { getLayoutedElements } from '../../../Layout';
 
 export function addMethodNode(parentId: string, rfInstance: ReactFlowInstance, direction: 'TB' | 'LR') {

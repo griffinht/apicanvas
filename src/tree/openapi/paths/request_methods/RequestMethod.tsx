@@ -1,7 +1,7 @@
 import { ReactFlowInstance, Node, Edge } from '@xyflow/react';
 import { deleteMethodNode } from './Delete';
 import { editMethod } from './Edit';
-import { createResponseNode } from './response/Response';
+import { createResponseNode } from './responses/response/ResponseCode';
 import { getLayoutedElements } from '../../../Layout';
 import { Trash2} from 'lucide-react';
 
@@ -12,6 +12,7 @@ export interface MethodNodeProps {
   parentId?: string;
   rfInstance: ReactFlowInstance;
   direction: 'TB' | 'LR';
+  summary?: string;
 }
 
 export function getMethodNodeStyle(method: string) {
@@ -44,7 +45,8 @@ export function createMethodNode(
   rfInstance: ReactFlowInstance,
   direction: 'TB' | 'LR',
   isHidden: boolean,
-  parentId?: string
+  parentId?: string,
+  summary?: string
 ): { nodes: Node[], edges: Edge[] } {
   const methodNode = {
     id: nodeId,
@@ -54,9 +56,11 @@ export function createMethodNode(
         nodeId={nodeId}
         parentId={parentId}
         rfInstance={rfInstance} 
-        direction={direction} 
+        direction={direction}
+        summary={summary}
       />,
-      parentId
+      parentId,
+      summary
     },
     type: 'default',
     position: { x: 0, y: 0 },
@@ -70,27 +74,51 @@ export function createMethodNode(
   };
 }
 
-export function MethodNode({ method, nodeId, rfInstance, direction }: MethodNodeProps) {
+export function MethodNode({ method, nodeId, rfInstance, direction, summary }: MethodNodeProps) {
   return (
     <div style={{
-      // display: 'flex',
       alignItems: 'center',
-      // position: 'relative',
-      // width: '100%',
-      // height: '100%',
-
       width: '25px',
       height: '20px',
+      position: 'relative',
     }}
     onMouseEnter={e => {
       const menu = e.currentTarget.querySelector('.hover-menu') as HTMLElement;
+      const tooltip = e.currentTarget.querySelector('.summary-tooltip') as HTMLElement;
       if (menu) menu.style.opacity = '1';
+      if (tooltip) tooltip.style.opacity = '1';
     }}
     onMouseLeave={e => {
       const menu = e.currentTarget.querySelector('.hover-menu') as HTMLElement;
+      const tooltip = e.currentTarget.querySelector('.summary-tooltip') as HTMLElement;
       if (menu) menu.style.opacity = '0';
+      if (tooltip) tooltip.style.opacity = '0';
     }}
     >
+      {summary && (
+        <div 
+          className="summary-tooltip"
+          style={{
+            backgroundColor: '#333',
+            color: '#fff',
+            padding: '4px 8px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            position: 'absolute',
+            bottom: '100%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            whiteSpace: 'nowrap',
+            opacity: 0,
+            transition: 'opacity 0.2s ease',
+            pointerEvents: 'none',
+            marginBottom: '4px',
+            zIndex: 1000,
+          }}
+        >
+          {summary}
+        </div>
+      )}
       <select 
         defaultValue={method.toUpperCase()}
         onChange={(e) => editMethod(nodeId, e.target.value, rfInstance, direction)}

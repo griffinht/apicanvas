@@ -1,5 +1,5 @@
 import { ReactFlowInstance } from '@xyflow/react';
-import { getLayoutedElements } from '../../../../Layout';
+import { getLayoutedElements } from '../../../../../Layout';
 
 export function deleteResponseNode(nodeId: string, rfInstance: ReactFlowInstance, direction: 'TB' | 'LR') {
   const nodes = rfInstance.getNodes().filter(node => node.id !== nodeId);

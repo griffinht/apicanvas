@@ -1,5 +1,5 @@
 import { ReactFlowInstance } from '@xyflow/react';
-import { ResponseNodeData } from './tree/openapi/paths/methods/response/Response';
+import { ResponseNodeData } from './tree/openapi/paths/request_methods/responses/response/ResponseCode';
 
 export const getPaths = (rfInstance: ReactFlowInstance) => {
   const flowData = rfInstance.toObject();

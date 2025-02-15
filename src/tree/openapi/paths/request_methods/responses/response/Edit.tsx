@@ -1,6 +1,6 @@
 import { ReactFlowInstance } from '@xyflow/react';
-import { ResponseNode } from './Response';
-import { getResponseNodeStyle } from './Response';
+import { ResponseNode } from './ResponseCode';
+import { getResponseNodeStyle } from './ResponseCode';
 
 export function editResponseCode(nodeId: string, rfInstance: ReactFlowInstance) {
   const nodes = rfInstance.getNodes();
