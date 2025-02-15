@@ -102,6 +102,17 @@ function parseSchema(obj: any): string {
 
 export function ResponseNode({ statusCode, description, schema, contentType, nodeId, rfInstance }: ResponseNodeProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showSchemaTag, setShowSchemaTag] = useState(false);
+
+  const getSchemaTag = (schema: any): string => {
+    if (schema?.$ref) {
+      return schema.$ref.split('/').pop() || '';
+    }
+    if (schema?.type === 'array' && schema.items?.$ref) {
+      return schema.items.$ref.split('/').pop() || '';
+    }
+    return '';
+  };
 
   return (
     <div style={{
@@ -276,16 +287,40 @@ export function ResponseNode({ statusCode, description, schema, contentType, nod
             </div>
           )}
 
-          {/* Schema Value */}
-          <div style={{
-            backgroundColor: '#EBF8FF',
-            padding: '8px',
-            borderRadius: '4px',
-            fontFamily: 'monospace',
-            fontSize: '0.9em',
-            color: '#4299E1'
-          }}>
+          {/* Schema Value with Hover */}
+          <div 
+            style={{
+              backgroundColor: '#EBF8FF',
+              padding: '8px',
+              borderRadius: '4px',
+              fontFamily: 'monospace',
+              fontSize: '0.9em',
+              color: '#4299E1',
+              position: 'relative',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={() => setShowSchemaTag(true)}
+            onMouseLeave={() => setShowSchemaTag(false)}
+          >
             {parseSchema(schema)}
+            {showSchemaTag && getSchemaTag(schema) && (
+              <div style={{
+                position: 'absolute',
+                top: '-30px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                backgroundColor: '#2D3748',
+                color: 'white',
+                padding: '4px 8px',
+                borderRadius: '4px',
+                fontSize: '0.8em',
+                whiteSpace: 'nowrap',
+                zIndex: 1000,
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+              }}>
+                {getSchemaTag(schema)}
+              </div>
+            )}
           </div>
         </div>
       )}
