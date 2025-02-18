@@ -268,20 +268,6 @@ export function ResponseNode({ statusCode, description, schema, contentType, nod
           gap: '12px',
           marginLeft: '24px', // Indent the details
         }}>
-          {/* TODO Note */}
-          <div style={{
-            color: '#ED8936',
-            fontSize: '0.8em',
-            backgroundColor: '#FEEBC8',
-            padding: '4px 8px',
-            borderRadius: '4px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px'
-          }}>
-            <span>⚠️</span>
-            <span>todo we are missing response headers and probably other stuff, also what about xml responses??</span>
-          </div>
 
           {/* Media Type */}
           {contentType && (
