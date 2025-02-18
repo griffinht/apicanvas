@@ -1,12 +1,12 @@
 export function TrySample() {
   const handleTrySample = async () => {
     try {
-      const response = await fetch('/openapi.json');
+      const response = await fetch('/openapi.yaml');
       if (!response.ok) {
         throw new Error('Failed to fetch sample API');
       }
-      const sampleApi = await response.json();
-      (window as any).editor?.setValue(JSON.stringify(sampleApi, null, 4));
+      const sampleApi = await response.text();
+      (window as any).editor?.setValue(sampleApi);
     } catch (error) {
       console.error('Error loading sample API:', error);
       alert('Failed to load sample API');
