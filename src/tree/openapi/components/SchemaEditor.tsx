@@ -156,10 +156,16 @@ const PropertyEditor: React.FC<{
 };
 
 export const SchemaEditor: React.FC<SchemaEditorProps> = ({
-  schema,
+  schema: inputSchema,
   onSchemaChange
 }) => {
   const [newPropertyName, setNewPropertyName] = useState('');
+  
+  // Ensure properties exists before any render
+  const schema = {
+    ...inputSchema,
+    properties: inputSchema.properties || {}
+  };
 
   const handlePropertyChange = (name: string, property: SchemaProperty) => {
     const newSchema = {
@@ -243,7 +249,7 @@ export const SchemaEditor: React.FC<SchemaEditorProps> = ({
 
       <div style={{ marginBottom: '16px' }}>
         <h4>Properties</h4>
-        {Object.entries(schema.properties).map(([name, property]) => (
+        {Object.entries(schema.properties || {}).map(([name, property]) => (
           <PropertyEditor
             key={name}
             name={name}

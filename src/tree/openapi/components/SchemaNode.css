@@ -100,6 +100,9 @@
   cursor: pointer;
   padding: 4px;
   transition: opacity 0.2s;
+  color: #000000;
+  font-weight: bold;
+  font-size: 14px;
 }
 
 .property-editor-button:hover {
