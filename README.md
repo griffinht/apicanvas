@@ -3,7 +3,7 @@
 | Visual API Design | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ |
 | Code Generation | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | Path Edit | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Schema Edit | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Schema Edit | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [Node Based UI](https://github.com/xyflow/awesome-node-based-uis) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 
 # todo
