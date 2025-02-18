@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReactFlowInstance, Node, Edge } from '@xyflow/react';
+import { ReactFlowInstance, Node, Edge, Position } from '@xyflow/react';
 import { SchemaEditor } from './SchemaEditor';
 import { Trash2 } from 'lucide-react';
 import './SchemaNode.css';
@@ -121,7 +121,9 @@ export function createSchemaNode(
       minWidth: '250px',
       boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
     },
-    className: 'schema-node-wrapper'
+    className: 'schema-node-wrapper',
+    sourcePosition: Position.Right,
+    targetPosition: Position.Left
   };
 
   return {
@@ -143,25 +145,69 @@ export function addSchemaNode(
   };
 
   const nodeId = `schema-${Date.now()}`;
-  const { nodes: newNodes, edges: newEdges } = createSchemaNode(
+  const { nodes: newNodes } = createSchemaNode(
     newSchema,
     nodeId,
     rfInstance
   );
 
+  // Get current nodes to calculate position
+  const currentNodes = rfInstance.getNodes();
+  const schemaNodes = currentNodes.filter(node => 
+    node.id.startsWith('schema-') || node.id === 'root-schema-node'
+  );
+  
+  // Position the new node below existing schema nodes
+  const node = newNodes[0];
+  node.position = {
+    x: 1500, // Same X position as other schema nodes
+    y: (schemaNodes.length) * 100 // Position below existing nodes
+  };
+
   const newEdge = {
-    id: `${parentId}-${nodeId}`,
-    source: parentId,
+    id: `root-schema-node-${nodeId}`,
+    source: 'root-schema-node',
     target: nodeId,
-    type: 'smoothstep'
+    type: 'smoothstep',
+    sourceHandle: 'right',
+    targetHandle: 'left',
+    style: { stroke: '#4299e1' }
   };
 
   rfInstance.setNodes(nodes => [...nodes, ...newNodes]);
-  rfInstance.setEdges(edges => [...edges, ...newEdges, newEdge]);
+  rfInstance.setEdges(edges => [...edges, newEdge]);
 }
 
 export function Schemas({ rfInstance }: SchemasProps) {
   const handleAddSchema = () => {
+    // Check if root schema node exists, if not create it
+    const nodes = rfInstance.getNodes();
+    const rootExists = nodes.some(node => node.id === 'root-schema-node');
+    
+    if (!rootExists) {
+      const rootNode: Node = {
+        id: 'root-schema-node',
+        type: 'default',
+        data: {
+          schema: { title: 'Schemas' },
+          label: 'Schemas'
+        },
+        position: { x: 1500, y: 0 },
+        style: {
+          background: '#4299e1',
+          color: 'white',
+          border: '2px solid #2b6cb0',
+          borderRadius: '8px',
+          padding: '12px',
+          width: 'fit-content',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+        },
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left
+      };
+      rfInstance.setNodes(nodes => [...nodes, rootNode]);
+    }
+
     const newSchema = {
       type: 'object',
       properties: {},
@@ -171,14 +217,35 @@ export function Schemas({ rfInstance }: SchemasProps) {
     };
 
     const nodeId = `schema-${Date.now()}`;
-    const { nodes: newNodes, edges: newEdges } = createSchemaNode(
+    const { nodes: newNodes } = createSchemaNode(
       newSchema,
       nodeId,
       rfInstance
     );
 
+    // Position the new node
+    const schemaNodes = nodes.filter(node => 
+      node.id.startsWith('schema-') || node.id === 'root-schema-node'
+    );
+    const node = newNodes[0];
+    node.position = {
+      x: 1500,
+      y: schemaNodes.length * 100
+    };
+
+    // Create edge to root node
+    const newEdge = {
+      id: `root-schema-node-${nodeId}`,
+      source: 'root-schema-node',
+      target: nodeId,
+      type: 'smoothstep',
+      sourceHandle: 'right',
+      targetHandle: 'left',
+      style: { stroke: '#4299e1' }
+    };
+
     rfInstance.setNodes(nodes => [...nodes, ...newNodes]);
-    rfInstance.setEdges(edges => [...edges, ...newEdges]);
+    rfInstance.setEdges(edges => [...edges, newEdge]);
   };
 
   return (
