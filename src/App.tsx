@@ -33,7 +33,7 @@ export default function App() {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
   const [direction, setDirection] = useState<'TB' | 'LR'>(() => 
-    (localStorage.getItem('direction') as 'TB' | 'LR') || 'TB'
+    (localStorage.getItem('direction') as 'TB' | 'LR') || 'LR'
   );
   const [splitPosition, setSplitPosition] = useState(50);
 
