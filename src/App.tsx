@@ -36,6 +36,34 @@ export default function App() {
     (localStorage.getItem('direction') as 'TB' | 'LR') || 'LR'
   );
   const [splitPosition, setSplitPosition] = useState(50);
+  const [editorMounted, setEditorMounted] = useState(false);
+
+  // Load sample for first-time visitors
+  useEffect(() => {
+    if (!editorMounted) return;
+
+    const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
+    if (!hasVisitedBefore) {
+      localStorage.setItem('hasVisitedBefore', 'true');
+      // Load sample API
+      const loadSample = async () => {
+        try {
+          const response = await fetch('/openapi.yaml');
+          if (!response.ok) {
+            throw new Error('Failed to fetch sample API');
+          }
+          const sampleApi = await response.text();
+          const editor = (window as any).editor;
+          if (editor) {
+            editor.setValue(sampleApi);
+          }
+        } catch (error) {
+          console.error('Error loading sample API:', error);
+        }
+      };
+      loadSample();
+    }
+  }, [editorMounted]);
 
   // Persist direction setting
   useEffect(() => {
@@ -86,6 +114,7 @@ export default function App() {
             <CustomEditor 
               onMount={(editor) => {
                 (window as any).editor = editor;
+                setEditorMounted(true);
               }}
               onChange={handleEditorChange}
             />
