@@ -133,7 +133,6 @@ export function createSchemaNode(
 }
 
 export function addSchemaNode(
-  parentId: string,
   rfInstance: ReactFlowInstance
 ) {
   const newSchema = {

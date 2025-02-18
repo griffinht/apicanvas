@@ -11,7 +11,7 @@ interface CustomEditorProps {
   defaultValue?: string;
 }
 
-export function CustomEditor({ onMount, onChange, defaultValue }: CustomEditorProps) {
+export function CustomEditor({ onMount, onChange }: Omit<CustomEditorProps, 'defaultValue'>) {
   const openApiExample = {
     openapi: "3.0.0",
     info: {

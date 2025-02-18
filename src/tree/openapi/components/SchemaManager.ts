@@ -16,7 +16,7 @@ export function getSchemas(nodes: Node[]) {
   return schemas;
 }
 
-function createRootSchemaNode(rfInstance: any): Node {
+function createRootSchemaNode(): Node {
   return {
     id: ROOT_SCHEMA_NODE_ID,
     type: 'default',
@@ -41,7 +41,7 @@ export function createSchemaNodes(
   schemas: { [key: string]: any },
   rfInstance: any
 ): { nodes: Node[], edges: Edge[] } {
-  const schemaNodes: Node[] = [createRootSchemaNode(rfInstance)];
+  const schemaNodes: Node[] = [createRootSchemaNode()];
   const schemaEdges: Edge[] = [];
 
   Object.entries(schemas).forEach(([name, schema], index) => {
