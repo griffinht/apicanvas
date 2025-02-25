@@ -16,6 +16,9 @@ import { CustomEditor } from './editor/CustomEditor.tsx';
 import { DragBar } from './dragbar/DragBar.tsx';
 import { Schemas } from './tree/openapi/components/Schemas';
 import { useSyncManager } from './tree/sync/SyncManager';
+import { useSharedSpecLoader } from './editor/share/ShareManager.ts';
+import { ShareLoadingOverlay } from './editor/share/ShareLoadingOverlay.tsx';
+import { ShareErrorMessage } from './editor/share/ShareErrorMessage.tsx';
 
 import '@xyflow/react/dist/style.css';
 
@@ -37,33 +40,17 @@ export default function App() {
   );
   const [splitPosition, setSplitPosition] = useState(50);
   const [editorMounted, setEditorMounted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Load sample for first-time visitors
+  // Use our custom hook for shared spec loading and first-time visitor experience
+  const { isLoadingSharedSpec, sharedSpecError } = useSharedSpecLoader(editorMounted);
+
+  // Set error message if shared spec loading fails
   useEffect(() => {
-    if (!editorMounted) return;
-
-    const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
-    if (!hasVisitedBefore) {
-      localStorage.setItem('hasVisitedBefore', 'true');
-      // Load sample API
-      const loadSample = async () => {
-        try {
-          const response = await fetch('/openapi.yaml');
-          if (!response.ok) {
-            throw new Error('Failed to fetch sample API');
-          }
-          const sampleApi = await response.text();
-          const editor = (window as any).editor;
-          if (editor) {
-            editor.setValue(sampleApi);
-          }
-        } catch (error) {
-          console.error('Error loading sample API:', error);
-        }
-      };
-      loadSample();
+    if (sharedSpecError) {
+      setErrorMessage(sharedSpecError);
     }
-  }, [editorMounted]);
+  }, [sharedSpecError]);
 
   // Persist direction setting
   useEffect(() => {
@@ -107,6 +94,17 @@ export default function App() {
 
   return (
     <ReactFlowProvider>
+      {/* Use our reusable components */}
+      <ShareLoadingOverlay 
+        isLoading={isLoadingSharedSpec} 
+        message="Loading API specification..." 
+      />
+      
+      <ShareErrorMessage 
+        message={errorMessage || syncError} 
+        onDismiss={() => setErrorMessage(null)} 
+      />
+      
       <div style={{ display: 'flex', width: '100vw', height: '100vh' }}>        
         <div style={{ width: `${splitPosition}%`, height: '100%' }}>
           <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '4px', backgroundColor: '#6BA539', zIndex: 9999 }}></div>
