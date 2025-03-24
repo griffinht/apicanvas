@@ -72,8 +72,8 @@ export function createSchemaNodes(
       source: ROOT_SCHEMA_NODE_ID,
       target: nodeId,
       type: 'smoothstep',
-      sourceHandle: 'right',
-      targetHandle: 'left',
+      //sourceHandle: 'right',
+      //targetHandle: 'left',
       style: { stroke: '#4299e1' }
     });
   });

@@ -169,7 +169,7 @@ export function addSchemaNode(
     target: nodeId,
     type: 'smoothstep',
     sourceHandle: 'right',
-    targetHandle: 'left',
+    //targetHandle: 'left',
     style: { stroke: '#4299e1' }
   };
 
@@ -239,7 +239,7 @@ export function Schemas({ rfInstance }: SchemasProps) {
       target: nodeId,
       type: 'smoothstep',
       sourceHandle: 'right',
-      targetHandle: 'left',
+      //targetHandle: 'left',
       style: { stroke: '#4299e1' }
     };
 
