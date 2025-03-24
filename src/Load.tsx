@@ -97,7 +97,7 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFl
                 let contentt = undefined
                 // Log if we find a schema reference
                 if (response.content) {
-                  const [contentType, content] = Object.entries(response.content)[0];
+                  const [_, content] = Object.entries(response.content)[0] as [string, any];
                   
                   // Helper function to handle schema references
                   const handleSchemaRef = (schemaRef: string, responseNodeId: string) => {
@@ -139,18 +139,18 @@ export const setPaths = (paths: any, direction: 'TB' | 'LR', rfInstance: ReactFl
                       type: 'smoothstep',
                       animated: true,
                       style: { stroke: '#4299e1' },
+                      sourceHandle: 'right',
+                      targetHandle: 'left'
                     });
                   };
 
                   // Handle direct schema reference
-                  // @ts-ignore
                   if (content.schema?.$ref) {
                     handleSchemaRef(content.schema.$ref, responseNodeId);
                   }
 
-                  schema = Object.values(response.content)[0].schema
-                  if (schema.type === 'array') {
-                    // @ts-ignore
+                  schema = (Object.values(response.content)[0] as any).schema
+                  if (schema?.type === 'array') {
                     if (schema.items?.$ref) {
                       handleSchemaRef(schema.items.$ref, responseNodeId);
                     }
