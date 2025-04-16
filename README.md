@@ -1,3 +1,11 @@
+# [OAS2Tree2](https://oas2tree2.griffinht.com)
+
+Node Based OpenAPI Design tool
+
+<img width="1470" alt="Screenshot 2025-04-16 at 2 30 45 PM" src="https://github.com/user-attachments/assets/d2aa65db-3daf-403c-9b1c-dc0c94cad71e" />
+
+## Features
+
 | | [oas2tree2](https://oas2tree2.griffinht.com) | [Apibldr](https://www.apibldr.com/) | [Swagger Editor](https://editor.swagger.io/) | [Stoplight Studio](https://github.com/stoplightio/studio) | [Postman](https://www.postman.com/api-design/) | [API Fiddle](https://api-fiddle.com/) | [OpenAPI-GUI](https://mermade.github.io/openapi-gui/) |
 |---------|----------|----------|----------------|-----------|-----------|-----------|-----------|
 | Visual API Design | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ |
@@ -6,17 +14,15 @@
 | Schema Edit | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [Node Based UI](https://github.com/xyflow/awesome-node-based-uis) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 
-# todo
-
-- [ ] add more features to table - "what does swagger editor have that we don't"
-- [ ] add more tools to the table
-
+## Alternatives
 
 https://apis.guru/awesome-openapi3/category.html#editors
 
 https://openapi.tools/#gui-editors
 
-# conferences
+## Research Paper (todo)
+
+## Conferences (todo)
 
 
 https://conf.researchr.org/track/fse-2025/fse-2025-demonstrations jan 13
