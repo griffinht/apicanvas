@@ -4,6 +4,10 @@ Node Based OpenAPI Design tool
 
 <img width="1470" alt="Screenshot 2025-04-16 at 2 30 45 PM" src="https://github.com/user-attachments/assets/d2aa65db-3daf-403c-9b1c-dc0c94cad71e" />
 
+
+https://github.com/user-attachments/assets/f354705c-2653-4b47-bca7-515b4981e187
+
+
 ## Features
 
 | | [oas2tree2](https://oas2tree2.griffinht.com) | [Apibldr](https://www.apibldr.com/) | [Swagger Editor](https://editor.swagger.io/) | [Stoplight Studio](https://github.com/stoplightio/studio) | [Postman](https://www.postman.com/api-design/) | [API Fiddle](https://api-fiddle.com/) | [OpenAPI-GUI](https://mermade.github.io/openapi-gui/) |
