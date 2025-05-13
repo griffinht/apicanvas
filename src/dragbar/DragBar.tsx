@@ -110,7 +110,7 @@ export function DragBar({
         fontSize: '12px'
       }}>
         <a
-          href="https://plausible.io/oas2tree2.griffinht.com"
+          href="https://example.com"
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
@@ -139,7 +139,7 @@ export function DragBar({
           analytics
         </a>
         <a
-          href="https://github.com/griffinht/oas2tree2"
+          href="https://example.com"
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
