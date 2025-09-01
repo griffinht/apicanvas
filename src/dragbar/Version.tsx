@@ -12,7 +12,7 @@ export function Version() {
       marginTop: '4px'
     }}>
       <a 
-        href={`https://example.com`}
+        href={`https://github.com/griffinht/oas2tree2/releases/tag/v${version}`}
         style={{
           color: 'inherit',
           textDecoration: 'none'
