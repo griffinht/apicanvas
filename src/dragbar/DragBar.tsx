@@ -110,7 +110,7 @@ export function DragBar({
         fontSize: '12px'
       }}>
         <a
-          href="https://example.com"
+          href="https://github.com/griffinht/oas2tree2"
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
@@ -139,7 +139,7 @@ export function DragBar({
           analytics
         </a>
         <a
-          href="https://example.com"
+          href="https://github.com/griffinht/oas2tree2"
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
